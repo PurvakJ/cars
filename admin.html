@@ -1,0 +1,3419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Marketplace - Admin</title>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ==================== COMMON STYLES ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  min-height: 100vh;
+}
+
+/* Header */
+header {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.logo i {
+  font-size: 2rem;
+  color: #fca5a5;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-badge {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* Navigation */
+nav {
+  background: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.nav-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #475569;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn:hover {
+  background: #ef4444;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.nav-btn.active {
+  background: #ef4444;
+  color: white;
+}
+
+/* Main Container */
+.container {
+  max-width: 1280px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+/* Pages */
+.page {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page.active {
+  display: block;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Car Grid */
+.cars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.car-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.car-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+  border-color: #ef4444;
+}
+
+.car-image-container {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.car-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.car-card:hover .car-image {
+  transform: scale(1.05);
+}
+
+.car-content {
+  padding: 1.5rem;
+}
+
+.car-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.car-price {
+  color: #10b981;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.car-dealer-price {
+  color: #3b82f6;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.car-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.car-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.car-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Status Badges */
+.car-status {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  z-index: 2;
+}
+
+.status-active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.status-inactive {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.status-sold {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+/* Buttons */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #64748b, #475569);
+  color: white;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  color: white;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s;
+  background: white;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 900px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.close-modal {
+  background: #f1f5f9;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #64748b;
+  transition: all 0.3s;
+}
+
+.close-modal:hover {
+  background: #ef4444;
+  color: white;
+  transform: rotate(90deg);
+}
+
+/* Dashboard */
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.dashboard-content {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+/* Admin Specific Styles */
+.admin-stat-card {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.3s;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.admin-stat-card h4 {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.admin-stat-card .stat {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Data Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.data-table th {
+  background: #f1f5f9;
+  padding: 15px;
+  text-align: left;
+  color: #64748b;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.data-table td {
+  padding: 15px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.data-table tr:hover {
+  background: #f8fafc;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 12px 24px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  font-weight: 600;
+  color: #64748b;
+  transition: all 0.3s;
+}
+
+.tab:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.tab.active {
+  background: #ef4444;
+  color: white;
+}
+
+/* Car Details */
+.car-details-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.car-details-images img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.detail-item {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border-left: 4px solid #ef4444;
+}
+
+.detail-item h4 {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.detail-item p {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Complete Details Grid */
+.complete-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.complete-detail-item {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.complete-detail-item h5 {
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.complete-detail-item p {
+  color: #1e293b;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #94a3b8;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+/* Messages */
+.message {
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin: 1.5rem 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.message.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.message.info {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+/* Search & Filter */
+.search-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .search-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .nav-content {
+    justify-content: center;
+  }
+  
+  .cars-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+    margin: 10px;
+  }
+  
+  .car-actions {
+    flex-direction: column;
+  }
+  
+  .data-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .complete-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="logo">
+      <i class="fas fa-car"></i>
+      Car Marketplace - Admin
+    </div>
+    <div class="user-info">
+      <span id="userEmail"></span>
+      <span id="userRole" class="user-badge">Administrator</span>
+      <button id="logoutBtn" class="btn btn-secondary" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-content">
+    <button class="nav-btn active" onclick="showPage('dashboard')">
+      <i class="fas fa-tachometer-alt"></i> Dashboard
+    </button>
+    <button class="nav-btn" onclick="showPage('users')">
+      <i class="fas fa-users"></i> Users
+    </button>
+    <button class="nav-btn" onclick="showPage('cars')">
+      <i class="fas fa-car"></i> Cars
+    </button>
+    <button class="nav-btn" onclick="showAddCarModal()">
+      <i class="fas fa-plus-circle"></i> Add Car
+    </button>
+    <button class="nav-btn" onclick="showPage('requests')">
+      <i class="fas fa-envelope"></i> Requests
+    </button>
+    <button class="nav-btn" onclick="showPage('views')">
+      <i class="fas fa-eye"></i> Views
+    </button>
+    <button class="nav-btn" onclick="showPage('auctions')">
+      <i class="fas fa-gavel"></i> Auctions
+    </button>
+    <button class="nav-btn" onclick="showPage('reports')">
+      <i class="fas fa-chart-bar"></i> Reports
+    </button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Admin Dashboard Page -->
+  <div id="dashboard" class="page active">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-crown"></i> Admin Dashboard
+      </div>
+      <p style="color: #64748b; margin-bottom: 1.5rem;">
+        Complete system overview and management
+      </p>
+      
+      <div class="admin-grid">
+        <div class="admin-stat-card">
+          <h4>Total Users</h4>
+          <div class="stat" id="totalUsers">0</div>
+        </div>
+        <div class="admin-stat-card">
+          <h4>Total Cars</h4>
+          <div class="stat" id="totalCars">0</div>
+        </div>
+        <div class="admin-stat-card">
+          <h4>Active Cars</h4>
+          <div class="stat" id="activeCars">0</div>
+        </div>
+        <div class="admin-stat-card">
+          <h4>Dealers</h4>
+          <div class="stat" id="totalDealers">0</div>
+        </div>
+        <div class="admin-stat-card">
+          <h4>Today's Views</h4>
+          <div class="stat" id="todayViews">0</div>
+        </div>
+        <div class="admin-stat-card">
+          <h4>Revenue</h4>
+          <div class="stat">₹<span id="totalRevenue">0</span></div>
+        </div>
+        <div class="admin-stat-card">
+          <h4>Active Auctions</h4>
+          <div class="stat" id="activeAuctions">0</div>
+        </div>
+        <div class="admin-stat-card">
+          <h4>Pending Requests</h4>
+          <div class="stat" id="pendingRequests">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users Management Page -->
+  <div id="users" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-users"></i> User Management
+      </div>
+      <p style="color: #64748b; margin-bottom: 1.5rem;">
+        Manage all users, change roles, and activate dealer accounts
+      </p>
+      
+      <div class="search-container">
+        <input type="text" id="searchUser" class="form-control" placeholder="🔍 Search users by name or email..." onkeyup="filterUsers()">
+        <select id="filterUserRole" class="form-control" onchange="filterUsers()">
+          <option value="">👤 All Roles</option>
+          <option value="user">👤 User</option>
+          <option value="dealer">🏢 Dealer</option>
+          <option value="admin">👑 Admin</option>
+        </select>
+        <select id="filterUserStatus" class="form-control" onchange="filterUsers()">
+          <option value="">📊 All Status</option>
+          <option value="active">✅ Active</option>
+          <option value="inactive">❌ Inactive</option>
+        </select>
+      </div>
+      
+      <div id="usersTableContainer">
+        <!-- Users table will load here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Cars Management Page -->
+  <div id="cars" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-car"></i> Car Management
+      </div>
+      <p style="color: #64748b; margin-bottom: 1.5rem;">
+        View, edit, and manage all cars in the system
+      </p>
+      
+      <div class="tabs">
+        <button class="tab active" onclick="showCarTab('all')">
+          <i class="fas fa-list"></i> All Cars
+        </button>
+        <button class="tab" onclick="showCarTab('active')">
+          <i class="fas fa-check-circle"></i> Active
+        </button>
+        <button class="tab" onclick="showCarTab('inactive')">
+          <i class="fas fa-times-circle"></i> Inactive
+        </button>
+        <button class="tab" onclick="showCarTab('sold')">
+          <i class="fas fa-tag"></i> Sold
+        </button>
+        <button class="tab" onclick="showCarTab('dealer')">
+          <i class="fas fa-store"></i> Dealer Cars
+        </button>
+      </div>
+      
+      <div class="search-container">
+        <input type="text" id="searchAdminCar" class="form-control" placeholder="🔍 Search cars..." onkeyup="filterAdminCars()">
+        <select id="filterAdminCategory" class="form-control" onchange="filterAdminCars()">
+          <option value="">📂 All Categories</option>
+          <option value="SUV">🚙 SUV</option>
+          <option value="Sedan">🚗 Sedan</option>
+          <option value="Hatchback">🚘 Hatchback</option>
+          <option value="Luxury">🏎️ Luxury</option>
+          <option value="Sports">⚡ Sports</option>
+          <option value="Electric">🔋 Electric</option>
+        </select>
+        <select id="filterAdminOwner" class="form-control" onchange="filterAdminCars()">
+          <option value="">👤 All Owners</option>
+          <option value="user">👤 User</option>
+          <option value="dealer">🏢 Dealer</option>
+          <option value="admin">👑 Admin</option>
+        </select>
+      </div>
+      
+      <div id="adminCarsContainer" class="cars-grid">
+        <!-- All cars will load here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Requests Page -->
+  <div id="requests" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-envelope"></i> Contact Requests
+      </div>
+      <p style="color: #64748b; margin-bottom: 1.5rem;">
+        View and manage all contact requests between users and dealers
+      </p>
+      
+      <div id="requestsContainer">
+        <!-- Contact requests will load here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Views Tracking Page -->
+  <div id="views" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-eye"></i> Car Views Tracking
+      </div>
+      <p style="color: #64748b; margin-bottom: 1.5rem;">
+        Track which users are viewing which cars
+      </p>
+      
+      <div id="viewsContainer">
+        <!-- Views will load here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Auctions Management Page -->
+  <div id="auctions" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-gavel"></i> Auction Management
+      </div>
+      <p style="color: #64748b; margin-bottom: 1.5rem;">
+        Start and manage live auctions for premium cars
+      </p>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h4 style="color: #1e293b;">Active Auctions</h4>
+        <button class="btn btn-primary" onclick="showStartAuctionModal()">
+          <i class="fas fa-plus"></i> Start New Auction
+        </button>
+      </div>
+      
+      <div id="auctionsContainer">
+        <!-- Auctions will load here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports Page -->
+  <div id="reports" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-chart-bar"></i> Reports & Analytics
+      </div>
+      <p style="color: #64748b; margin-bottom: 1.5rem;">
+        System analytics and detailed reports
+      </p>
+      
+      <div class="tabs">
+        <button class="tab active" onclick="showReportTab('overview')">
+          <i class="fas fa-chart-line"></i> Overview
+        </button>
+        <button class="tab" onclick="showReportTab('users')">
+          <i class="fas fa-users"></i> Users
+        </button>
+        <button class="tab" onclick="showReportTab('cars')">
+          <i class="fas fa-car"></i> Cars
+        </button>
+        <button class="tab" onclick="showReportTab('revenue')">
+          <i class="fas fa-money-bill-wave"></i> Revenue
+        </button>
+      </div>
+      
+      <div id="reportsContainer">
+        <!-- Reports will load here -->
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Car Details Modal -->
+<div id="carDetailsModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="carDetailTitle"></div>
+      <button class="close-modal" onclick="hideModal('carDetailsModal')">&times;</button>
+    </div>
+    
+    <div id="carDetailsContent">
+      <!-- Car details will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- User Edit Modal -->
+<div id="userEditModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-edit"></i> Edit User
+      </div>
+      <button class="close-modal" onclick="hideModal('userEditModal')">&times;</button>
+    </div>
+    
+    <div id="userEditContent">
+      <!-- User edit form will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- Start Auction Modal -->
+<div id="startAuctionModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-gavel"></i> Start New Auction
+      </div>
+      <button class="close-modal" onclick="hideModal('startAuctionModal')">&times;</button>
+    </div>
+    
+    <div id="startAuctionContent">
+      <!-- Auction form will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- Add Car Details Modal -->
+<div id="carDetailsAdminModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-info-circle"></i> Complete Car Details
+      </div>
+      <button class="close-modal" onclick="hideModal('carDetailsAdminModal')">&times;</button>
+    </div>
+    
+    <div id="carDetailsAdminContent">
+      <!-- Car details form will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- Request Details Modal -->
+<div id="requestDetailsModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-info-circle"></i> Request Details
+      </div>
+      <button class="close-modal" onclick="hideModal('requestDetailsModal')">&times;</button>
+    </div>
+    
+    <div id="requestDetailsContent">
+      <!-- Request details will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- Auction Details Modal -->
+<div id="auctionDetailsModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="auctionDetailTitle"></div>
+      <button class="close-modal" onclick="hideModal('auctionDetailsModal')">&times;</button>
+    </div>
+    
+    <div id="auctionDetailsContent">
+      <!-- Auction details will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- Add Car Modal (Admin) -->
+<div id="addCarAdminModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-plus-circle"></i> Add New Car
+      </div>
+      <button class="close-modal" onclick="hideModal('addCarAdminModal')">&times;</button>
+    </div>
+    
+    <div id="addCarAdminContent">
+      <!-- Add car form will load here -->
+    </div>
+  </div>
+</div>
+
+<script>
+// Update this with your actual Google Apps Script URL
+const API_URL = "https://script.google.com/macros/s/AKfycbymbaeEfQTyJedYozT4w_nUJCRrRr_4CbB_IgyVToXLJHHLXLOR-B0c-yv-aCM19xEQ/exec";
+const USER_TYPE = 'admin';
+
+let currentUser = null;
+let allCars = [];
+let allUsers = [];
+let allRequests = [];
+let allViews = [];
+let allAuctions = [];
+let allPayments = [];
+let currentCarTab = 'all';
+
+/* ==================== INITIALIZATION ==================== */
+document.addEventListener('DOMContentLoaded', function() {
+  checkAuthStatus();
+});
+
+/* ==================== AUTHENTICATION ==================== */
+function checkAuthStatus() {
+  const savedUser = localStorage.getItem('carMarketUser');
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    updateUIForUser();
+    loadAdminDashboard();
+  } else {
+    autoLogin();
+  }
+}
+
+function autoLogin() {
+  currentUser = {
+    email: 'admin@example.com',
+    role: 'admin',
+    name: 'Admin User',
+    phone: '9876543210',
+    address: 'Admin Office, City',
+    dealerActive: 'YES'
+  };
+  
+  localStorage.setItem('carMarketUser', JSON.stringify(currentUser));
+  updateUIForUser();
+  loadAdminDashboard();
+}
+
+function logout() {
+  localStorage.removeItem('carMarketUser');
+  window.location.href = 'main.html';
+}
+
+function updateUIForUser() {
+  if (currentUser) {
+    document.getElementById('userEmail').textContent = currentUser.email;
+  }
+}
+
+/* ==================== NAVIGATION ==================== */
+function showPage(pageId) {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelector(`.nav-btn[onclick*="${pageId}"]`)?.classList.add('active');
+  
+  document.querySelectorAll('.page').forEach(page => {
+    page.classList.remove('active');
+  });
+  
+  document.getElementById(pageId).classList.add('active');
+  
+  switch(pageId) {
+    case 'dashboard':
+      loadAdminDashboard();
+      break;
+    case 'users':
+      loadAllUsers();
+      break;
+    case 'cars':
+      loadAllCars();
+      break;
+    case 'requests':
+      loadAllRequests();
+      break;
+    case 'views':
+      loadAllViews();
+      break;
+    case 'auctions':
+      loadAllAuctions();
+      break;
+    case 'reports':
+      loadReports();
+      break;
+  }
+}
+
+/* ==================== MODAL FUNCTIONS ==================== */
+function showModal(modalId) {
+  document.getElementById(modalId).classList.remove('hidden');
+}
+
+function hideModal(modalId) {
+  document.getElementById(modalId).classList.add('hidden');
+}
+
+/* ==================== ADMIN DASHBOARD ==================== */
+function loadAdminDashboard() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getAdminStats' })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data && !data.status) {
+      document.getElementById('totalUsers').textContent = data.totalUsers || 0;
+      document.getElementById('totalCars').textContent = data.totalCars || 0;
+      document.getElementById('activeCars').textContent = data.activeCars || 0;
+      document.getElementById('totalDealers').textContent = data.totalDealers || 0;
+      document.getElementById('todayViews').textContent = data.todayViews || 0;
+      document.getElementById('totalRevenue').textContent = data.totalRevenue ? data.totalRevenue.toLocaleString() : '0';
+      document.getElementById('activeAuctions').textContent = data.activeAuctions || 0;
+      document.getElementById('pendingRequests').textContent = data.pendingRequests || 0;
+    } else if (data && data.status === 'error') {
+      console.error('Error loading stats:', data.message);
+    }
+  })
+  .catch(err => {
+    console.error('Error loading admin stats:', err);
+  });
+  
+  loadAllUsers();
+  loadAllCars();
+  loadAllRequests();
+  loadAllViews();
+  loadAllAuctions();
+  loadAllPayments();
+}
+
+/* ==================== USER MANAGEMENT ==================== */
+function loadAllUsers() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getAllUsers' })
+  })
+  .then(response => response.json())
+  .then(users => {
+    if (users && !users.status) {
+      allUsers = users;
+      displayUsersTable(users);
+    } else if (users && users.status === 'error') {
+      console.error('Error loading users:', users.message);
+      displayUsersTable([]);
+    } else {
+      allUsers = [];
+      displayUsersTable([]);
+    }
+  })
+  .catch(err => {
+    console.error('Error loading users:', err);
+    displayUsersTable([]);
+  });
+}
+
+function displayUsersTable(users) {
+  const container = document.getElementById('usersTableContainer');
+  
+  if (!users || users.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">👤</div>
+        <h3>No Users Found</h3>
+        <p>No users registered in the system yet.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = `
+    <div style="overflow-x: auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Dealer Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  
+  users.forEach((user, index) => {
+    const [email, , role, name, phone, address, dealerActive] = user;
+    
+    html += `
+      <tr>
+        <td>${email}</td>
+        <td>${name}</td>
+        <td><span class="user-badge ${role}" style="font-size: 0.8rem;">${role}</span></td>
+        <td>${phone}</td>
+        <td>${address}</td>
+        <td>${dealerActive === 'YES' ? 
+          '<span style="color:#10b981;font-weight:600;">ACTIVE</span>' : 
+          role === 'dealer' ? '<span style="color:#ef4444;font-weight:600;">INACTIVE</span>' : 
+          '<span style="color:#3b82f6;font-weight:600;">N/A</span>'}</td>
+        <td>
+          <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+            <button class="btn btn-warning btn-small" onclick="editUser('${email}')">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            ${role === 'dealer' && dealerActive !== 'YES' ? `
+              <button class="btn btn-success btn-small" onclick="activateDealerAdmin('${email}')">
+                <i class="fas fa-bolt"></i> Activate
+              </button>
+            ` : ''}
+            ${email !== currentUser.email ? `
+              <button class="btn btn-danger btn-small" onclick="deleteUser('${email}')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            ` : ''}
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+  
+  html += `
+        </tbody>
+      </table>
+      <p style="text-align: center; padding: 10px; color: #64748b; font-size: 0.9rem;">
+        Total Users: ${users.length}
+      </p>
+    </div>
+  `;
+  
+  container.innerHTML = html;
+}
+
+function filterUsers() {
+  const searchTerm = document.getElementById('searchUser').value.toLowerCase();
+  const roleFilter = document.getElementById('filterUserRole').value;
+  const statusFilter = document.getElementById('filterUserStatus').value;
+  
+  const filteredUsers = allUsers.filter(user => {
+    const email = user[0] || '';
+    const role = user[2] || 'user';
+    const name = user[3] || '';
+    const dealerActive = user[6] || 'NO';
+    
+    const matchesSearch = email.toLowerCase().includes(searchTerm) || 
+                         name.toLowerCase().includes(searchTerm);
+    if (!matchesSearch) return false;
+    
+    if (roleFilter && role !== roleFilter) return false;
+    
+    if (statusFilter === 'active' && (role === 'dealer' && dealerActive !== 'YES')) return false;
+    if (statusFilter === 'inactive' && (role === 'dealer' && dealerActive === 'YES')) return false;
+    
+    return true;
+  });
+  
+  displayUsersTable(filteredUsers);
+}
+
+function editUser(email) {
+  const user = allUsers.find(u => u[0] === email);
+  if (!user) return;
+  
+  const [emailAddr, , role, name, phone, address, dealerActive] = user;
+  
+  document.getElementById('userEditContent').innerHTML = `
+    <input type="hidden" id="editUserEmail" value="${emailAddr}">
+    
+    <div class="form-group">
+      <label><i class="fas fa-user"></i> Name</label>
+      <input type="text" id="editUserName" class="form-control" value="${name || ''}">
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-phone"></i> Phone</label>
+      <input type="tel" id="editUserPhone" class="form-control" value="${phone || ''}">
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-user-tag"></i> Role</label>
+      <select id="editUserRole" class="form-control">
+        <option value="user" ${role === 'user' ? 'selected' : ''}>User</option>
+        <option value="dealer" ${role === 'dealer' ? 'selected' : ''}>Dealer</option>
+        <option value="admin" ${role === 'admin' ? 'selected' : ''}>Admin</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-map-marker-alt"></i> Address</label>
+      <textarea id="editUserAddress" class="form-control" rows="3">${address || ''}</textarea>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-bolt"></i> Dealer Status</label>
+      <select id="editUserDealerActive" class="form-control" ${role !== 'dealer' ? 'disabled' : ''}>
+        <option value="YES" ${dealerActive === 'YES' ? 'selected' : ''}>Active</option>
+        <option value="NO" ${dealerActive !== 'YES' ? 'selected' : ''}>Inactive</option>
+      </select>
+      ${role !== 'dealer' ? '<small style="color:#64748b;">Only applicable for dealers</small>' : ''}
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn btn-primary" onclick="updateUser()">
+        <i class="fas fa-save"></i> Update User
+      </button>
+      <button class="btn btn-secondary" onclick="hideModal('userEditModal')">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+  `;
+  
+  showModal('userEditModal');
+}
+
+function updateUser() {
+  const email = document.getElementById('editUserEmail').value;
+  const name = document.getElementById('editUserName').value.trim();
+  const phone = document.getElementById('editUserPhone').value.trim();
+  const role = document.getElementById('editUserRole').value;
+  const address = document.getElementById('editUserAddress').value.trim();
+  const dealerActive = document.getElementById('editUserDealerActive').value;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'updateUser',
+      email: email,
+      name: name,
+      phone: phone,
+      role: role,
+      address: address,
+      dealerActive: dealerActive
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'updated' || data.status === 'role_updated') {
+      alert('✅ User updated successfully');
+      hideModal('userEditModal');
+      loadAllUsers();
+      loadAdminDashboard();
+    } else {
+      alert('❌ Failed to update user: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => {
+    alert('❌ Error updating user: ' + err.message);
+  });
+}
+
+function activateDealerAdmin(email) {
+  if (confirm(`Activate dealer account for ${email}? This will allow them to access dealer features.`)) {
+    fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'activateDealer',
+        email: email
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'activated' || data.status === 'dealer_activated') {
+        alert('✅ Dealer account activated');
+        loadAllUsers();
+        loadAdminDashboard();
+      } else {
+        alert('❌ Failed to activate dealer: ' + (data.message || 'Unknown error'));
+      }
+    })
+    .catch(err => {
+      alert('❌ Error activating dealer: ' + err.message);
+    });
+  }
+}
+
+function deleteUser(email) {
+  if (email === currentUser.email) {
+    alert('❌ You cannot delete your own account');
+    return;
+  }
+  
+  if (confirm(`Are you sure you want to delete user ${email}? This action cannot be undone.`)) {
+    fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'deleteUser',
+        email: email
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'deleted') {
+        alert('✅ User deleted successfully');
+        loadAllUsers();
+        loadAdminDashboard();
+      } else {
+        alert('❌ Failed to delete user: ' + (data.message || 'Unknown error'));
+      }
+    })
+    .catch(err => {
+      alert('❌ Error deleting user: ' + err.message);
+    });
+  }
+}
+
+/* ==================== CAR MANAGEMENT ==================== */
+function loadAllCars() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getCars' })
+  })
+  .then(response => response.json())
+  .then(cars => {
+    if (cars && !cars.status) {
+      allCars = cars;
+      displayAdminCars(cars);
+    } else if (cars && cars.status === 'error') {
+      console.error('Error loading cars:', cars.message);
+      displayAdminCars([]);
+    } else {
+      allCars = [];
+      displayAdminCars([]);
+    }
+  })
+  .catch(err => {
+    console.error('Error loading cars:', err);
+    displayAdminCars([]);
+  });
+}
+
+function displayAdminCars(cars) {
+  const container = document.getElementById('adminCarsContainer');
+  container.innerHTML = '';
+  
+  let filteredCars = cars;
+  
+  switch(currentCarTab) {
+    case 'active':
+      filteredCars = cars.filter(car => car[9] === 'ACTIVE');
+      break;
+    case 'inactive':
+      filteredCars = cars.filter(car => car[9] === 'INACTIVE');
+      break;
+    case 'sold':
+      filteredCars = cars.filter(car => car[9] === 'SOLD');
+      break;
+    case 'dealer':
+      filteredCars = cars.filter(car => car[1] === 'dealer');
+      break;
+  }
+  
+  if (!filteredCars || filteredCars.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🚗</div>
+        <h3>No Cars Found</h3>
+        <p>No cars match the selected criteria.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  filteredCars.forEach(car => {
+    const carCard = createAdminCarCard(car);
+    container.appendChild(carCard);
+  });
+}
+
+function createAdminCarCard(car) {
+  const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+  
+  const images = imagesJson ? JSON.parse(imagesJson) : [];
+  const mainImage = images.length > 0 ? images[0] : 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop';
+  
+  const card = document.createElement('div');
+  card.className = 'car-card';
+  card.innerHTML = `
+    <span class="car-status ${status === 'ACTIVE' ? 'status-active' : status === 'SOLD' ? 'status-sold' : 'status-inactive'}">${status}</span>
+    <div class="car-image-container">
+      <img src="${mainImage}" alt="${title}" class="car-image" 
+           onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop'">
+    </div>
+    <div class="car-content">
+      <h3 class="car-title">${title}</h3>
+      <div class="car-price">
+        <div><i class="fas fa-tag"></i> ₹${Number(price).toLocaleString()}</div>
+        ${dealerPrice && dealerPrice !== price ? `
+          <div class="car-dealer-price">
+            <i class="fas fa-user-tie"></i> Dealer: ₹${Number(dealerPrice).toLocaleString()}
+          </div>
+        ` : ''}
+      </div>
+      <div class="car-meta">
+        <span><i class="fas fa-folder"></i> ${category || 'No category'}</span>
+        <span><i class="fas fa-user-tag"></i> ${ownerRole}</span>
+      </div>
+      <p style="color: #64748b; font-size: 0.9rem; margin: 10px 0;">
+        <i class="fas fa-envelope"></i> ${ownerEmail}
+      </p>
+      <p style="color: #64748b; font-size: 0.9rem;">
+        <i class="fas fa-calendar"></i> ${new Date(createdAt).toLocaleDateString()}
+      </p>
+      <div class="car-actions">
+        <button class="btn btn-primary btn-small" onclick="viewCarDetailsAdmin('${id}')">
+          <i class="fas fa-eye"></i> View
+        </button>
+        <button class="btn btn-info btn-small" onclick="showCompleteCarDetailsForm('${id}')">
+          <i class="fas fa-info-circle"></i> Complete Details
+        </button>
+        <button class="btn btn-warning btn-small" onclick="editCarAdmin('${id}')">
+          <i class="fas fa-edit"></i> Edit
+        </button>
+        <button class="btn btn-danger btn-small" onclick="deleteCarAdmin('${id}')">
+          <i class="fas fa-trash"></i> Delete
+        </button>
+        <button class="btn btn-primary btn-small" onclick="showStartAuctionModal('${id}')">
+          <i class="fas fa-gavel"></i> Auction
+        </button>
+      </div>
+    </div>
+  `;
+  
+  return card;
+}
+
+function showCarTab(tab) {
+  currentCarTab = tab;
+  document.querySelectorAll('#cars .tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  displayAdminCars(allCars);
+}
+
+function filterAdminCars() {
+  const searchTerm = document.getElementById('searchAdminCar').value.toLowerCase();
+  const categoryFilter = document.getElementById('filterAdminCategory').value;
+  const ownerFilter = document.getElementById('filterAdminOwner').value;
+  
+  const filteredCars = allCars.filter(car => {
+    const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+    
+    const matchesSearch = title.toLowerCase().includes(searchTerm) || 
+                         description.toLowerCase().includes(searchTerm) ||
+                         ownerEmail.toLowerCase().includes(searchTerm);
+    if (!matchesSearch) return false;
+    
+    if (categoryFilter && category !== categoryFilter) return false;
+    
+    if (ownerFilter && ownerRole !== ownerFilter) return false;
+    
+    switch(currentCarTab) {
+      case 'active':
+        if (status !== 'ACTIVE') return false;
+        break;
+      case 'inactive':
+        if (status !== 'INACTIVE') return false;
+        break;
+      case 'sold':
+        if (status !== 'SOLD') return false;
+        break;
+      case 'dealer':
+        if (ownerRole !== 'dealer') return false;
+        break;
+    }
+    
+    return true;
+  });
+  
+  const container = document.getElementById('adminCarsContainer');
+  container.innerHTML = '';
+  
+  if (filteredCars.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🚗</div>
+        <h3>No Cars Found</h3>
+        <p>No cars match your search criteria.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  filteredCars.forEach(car => {
+    const carCard = createAdminCarCard(car);
+    container.appendChild(carCard);
+  });
+}
+
+function viewCarDetailsAdmin(carId) {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getCarDetails',
+      carId: carId,
+      email: currentUser.email,
+      role: currentUser.role
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data && data.car) {
+      const car = data.car;
+      const details = data.details || [];
+      const images = car[7] ? JSON.parse(car[7]) : [];
+      const defaultImages = ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&h=400&fit=crop'];
+      
+      document.getElementById('carDetailTitle').innerHTML = `<i class="fas fa-car"></i> ${car[3]}`;
+      
+      const detailsContent = document.getElementById('carDetailsContent');
+      const displayImages = images.length > 0 ? images : defaultImages;
+      
+      const owner = allUsers.find(u => u[0] === car[2]);
+      const ownerName = owner ? owner[3] : car[2];
+      const ownerPhone = owner ? owner[4] : 'Not available';
+      const ownerAddress = owner ? owner[5] : 'Not available';
+      
+      let detailsHtml = `
+        <div class="car-details-images">
+          ${displayImages.map(img => `
+            <img src="${img}" onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&h=400&fit=crop'">
+          `).join('')}
+        </div>
+        
+        <div class="details-grid">
+          <div class="detail-item">
+            <h4><i class="fas fa-tag"></i> User Price</h4>
+            <p>₹${Number(car[4]).toLocaleString()}</p>
+          </div>
+          <div class="detail-item">
+            <h4><i class="fas fa-user-tie"></i> Dealer Price</h4>
+            <p style="color: #10b981; font-weight: 600;">₹${Number(car[5]).toLocaleString()}</p>
+          </div>
+          <div class="detail-item">
+            <h4><i class="fas fa-folder"></i> Category</h4>
+            <p>${car[8] || 'Not specified'}</p>
+          </div>
+          <div class="detail-item">
+            <h4><i class="fas fa-info-circle"></i> Status</h4>
+            <p>${car[9]}</p>
+          </div>
+        </div>
+        
+        <!-- Owner Information -->
+        <div class="card" style="margin: 2rem 0;">
+          <h4 style="color: #1e293b; margin-bottom: 1rem;">
+            <i class="fas fa-user"></i> Owner Information
+          </h4>
+          <div class="details-grid">
+            <div class="detail-item">
+              <h4><i class="fas fa-user"></i> Name</h4>
+              <p>${ownerName}</p>
+            </div>
+            <div class="detail-item">
+              <h4><i class="fas fa-envelope"></i> Email</h4>
+              <p>${car[2]}</p>
+            </div>
+            <div class="detail-item">
+              <h4><i class="fas fa-phone"></i> Phone</h4>
+              <p>${ownerPhone}</p>
+            </div>
+            <div class="detail-item">
+              <h4><i class="fas fa-map-marker-alt"></i> Address</h4>
+              <p>${ownerAddress}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card" style="margin: 2rem 0;">
+          <h4 style="color: #1e293b; margin-bottom: 1rem;">
+            <i class="fas fa-align-left"></i> Description
+          </h4>
+          <p style="color: #475569; line-height: 1.6;">${car[6]}</p>
+        </div>
+        
+        <p style="color: #64748b; margin: 1rem 0;">
+          <i class="fas fa-calendar"></i> Posted on: ${new Date(car[10]).toLocaleDateString()}
+        </p>
+      `;
+      
+      // Add extra details if available
+      if (details.length > 2) {
+        detailsHtml += `
+          <div class="card" style="margin: 2rem 0;">
+            <h4 style="color: #1e293b; margin-bottom: 1.5rem;">
+              <i class="fas fa-cogs"></i> Additional Details
+            </h4>
+            <div class="details-grid">
+              ${details[2] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-engine"></i> Engine</h4>
+                  <p>${details[2]}</p>
+                </div>
+              ` : ''}
+              ${details[3] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-tachometer-alt"></i> Mileage</h4>
+                  <p>${details[3]}</p>
+                </div>
+              ` : ''}
+              ${details[4] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-gas-pump"></i> Fuel Type</h4>
+                  <p>${details[4]}</p>
+                </div>
+              ` : ''}
+              ${details[5] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-cogs"></i> Transmission</h4>
+                  <p>${details[5]}</p>
+                </div>
+              ` : ''}
+              ${details[6] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-calendar"></i> Year</h4>
+                  <p>${details[6]}</p>
+                </div>
+              ` : ''}
+              ${details[7] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-palette"></i> Color</h4>
+                  <p>${details[7]}</p>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+      
+      // Try to load complete details
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'getCarCompleteDetails',
+          carId: carId
+        })
+      })
+      .then(response => response.json())
+      .then(completeData => {
+        if (completeData && completeData.completeDetails) {
+          const completeDetails = completeData.completeDetails;
+          if (completeDetails.length > 2) {
+            detailsHtml += `
+              <div class="card" style="margin: 2rem 0;">
+                <h4 style="color: #1e293b; margin-bottom: 1.5rem;">
+                  <i class="fas fa-file-alt"></i> Complete Technical Specifications
+                </h4>
+                <div class="complete-details-grid">
+                  ${completeDetails[2] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-engine"></i> Engine CC</h5>
+                      <p>${completeDetails[2]}</p>
+                    </div>
+                  ` : ''}
+                  ${completeDetails[3] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-cogs"></i> Cylinders</h5>
+                      <p>${completeDetails[3]}</p>
+                    </div>
+                  ` : ''}
+                  ${completeDetails[4] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-bolt"></i> Torque</h5>
+                      <p>${completeDetails[4]}</p>
+                    </div>
+                  ` : ''}
+                  ${completeDetails[5] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-horse"></i> Horsepower</h5>
+                      <p>${completeDetails[5]}</p>
+                    </div>
+                  ` : ''}
+                  ${completeDetails[6] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-tachometer-alt"></i> Top Speed</h5>
+                      <p>${completeDetails[6]}</p>
+                    </div>
+                  ` : ''}
+                  ${completeDetails[7] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-list"></i> Variants</h5>
+                      <p>${completeDetails[7]}</p>
+                    </div>
+                  ` : ''}
+                  ${completeDetails[8] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-gas-pump"></i> Fuel Models</h5>
+                      <p>${completeDetails[8]}</p>
+                    </div>
+                  ` : ''}
+                  ${completeDetails[9] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-chair"></i> Seats</h5>
+                      <p>${completeDetails[9]}</p>
+                    </div>
+                  ` : ''}
+                  ${completeDetails[10] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-shield-alt"></i> Airbags</h5>
+                      <p>${completeDetails[10]}</p>
+                    </div>
+                  ` : ''}
+                  ${completeDetails[11] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-star"></i> NCAP Rating</h5>
+                      <p>${completeDetails[11]}</p>
+                    </div>
+                  ` : ''}
+                  ${completeDetails[12] ? `
+                    <div class="complete-detail-item">
+                      <h5><i class="fas fa-road"></i> Mileage</h5>
+                      <p>${completeDetails[12]}</p>
+                    </div>
+                  ` : ''}
+                </div>
+                
+                ${completeDetails[13] || completeDetails[14] ? `
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                    ${completeDetails[13] ? `
+                      <div class="complete-detail-item" style="background: #d1fae5; border-color: #a7f3d0;">
+                        <h5 style="color: #065f46;"><i class="fas fa-plus-circle"></i> Pros</h5>
+                        <p style="color: #065f46; white-space: pre-line;">${completeDetails[13]}</p>
+                      </div>
+                    ` : ''}
+                    ${completeDetails[14] ? `
+                      <div class="complete-detail-item" style="background: #fee2e2; border-color: #fecaca;">
+                        <h5 style="color: #991b1b;"><i class="fas fa-minus-circle"></i> Cons</h5>
+                        <p style="color: #991b1b; white-space: pre-line;">${completeDetails[14]}</p>
+                      </div>
+                    ` : ''}
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }
+        }
+        
+        // Add admin action buttons
+        detailsHtml += `
+          <div style="display: flex; gap: 12px; margin-top: 2rem; flex-wrap: wrap;">
+            <button class="btn btn-info" onclick="showCompleteCarDetailsForm('${carId}')">
+              <i class="fas fa-edit"></i> Edit Complete Details
+            </button>
+            <button class="btn btn-warning" onclick="editCarAdmin('${carId}')">
+              <i class="fas fa-edit"></i> Edit Car Info
+            </button>
+            <button class="btn btn-primary" onclick="showStartAuctionModal('${carId}')">
+              <i class="fas fa-gavel"></i> Start Auction
+            </button>
+            <button class="btn btn-danger" onclick="deleteCarAdmin('${carId}')">
+              <i class="fas fa-trash"></i> Delete Car
+            </button>
+          </div>
+        `;
+        
+        detailsContent.innerHTML = detailsHtml;
+        showModal('carDetailsModal');
+      })
+      .catch(err => {
+        console.error('Error loading complete details:', err);
+        
+        // Add admin action buttons even if complete details fail
+        detailsHtml += `
+          <div style="display: flex; gap: 12px; margin-top: 2rem; flex-wrap: wrap;">
+            <button class="btn btn-info" onclick="showCompleteCarDetailsForm('${carId}')">
+              <i class="fas fa-plus-circle"></i> Add Complete Details
+            </button>
+            <button class="btn btn-warning" onclick="editCarAdmin('${carId}')">
+              <i class="fas fa-edit"></i> Edit Car Info
+            </button>
+            <button class="btn btn-primary" onclick="showStartAuctionModal('${carId}')">
+              <i class="fas fa-gavel"></i> Start Auction
+            </button>
+            <button class="btn btn-danger" onclick="deleteCarAdmin('${carId}')">
+              <i class="fas fa-trash"></i> Delete Car
+            </button>
+          </div>
+        `;
+        
+        detailsContent.innerHTML = detailsHtml;
+        showModal('carDetailsModal');
+      });
+    } else {
+      alert('❌ Error loading car details');
+    }
+  })
+  .catch(err => {
+    console.error('Error loading car details:', err);
+    alert('❌ Error loading car details: ' + err.message);
+  });
+}
+
+function editCarAdmin(carId) {
+  const car = allCars.find(c => c[0] == carId);
+  if (!car) return;
+  
+  const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+  const images = imagesJson ? JSON.parse(imagesJson) : [];
+  
+  document.getElementById('carDetailTitle').innerHTML = `<i class="fas fa-edit"></i> Edit Car: ${title}`;
+  
+  const detailsContent = document.getElementById('carDetailsContent');
+  detailsContent.innerHTML = `
+    <input type="hidden" id="editCarId" value="${id}">
+    
+    <div class="form-group">
+      <label><i class="fas fa-heading"></i> Car Title</label>
+      <input type="text" id="editCarTitle" class="form-control" value="${title}" placeholder="Car title">
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-tag"></i> User Price (₹)</label>
+      <input type="number" id="editCarPrice" class="form-control" value="${price}" placeholder="Price shown to all users">
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-user-tie"></i> Dealer Price (₹)</label>
+      <input type="number" id="editCarDealerPrice" class="form-control" value="${dealerPrice || price}" placeholder="Price shown to active dealers only">
+      <small style="color: #64748b;">Only visible to active dealer accounts</small>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-align-left"></i> Description</label>
+      <textarea id="editCarDesc" class="form-control" rows="4" placeholder="Description">${description}</textarea>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-image"></i> Image URLs (comma separated)</label>
+      <input type="text" id="editCarImages" class="form-control" 
+             value="${images.join(', ')}" 
+             placeholder="Image URLs">
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-folder"></i> Category</label>
+      <select id="editCarCategory" class="form-control">
+        <option value="">Select Category</option>
+        <option value="SUV" ${category === 'SUV' ? 'selected' : ''}>🚙 SUV</option>
+        <option value="Sedan" ${category === 'Sedan' ? 'selected' : ''}>🚗 Sedan</option>
+        <option value="Hatchback" ${category === 'Hatchback' ? 'selected' : ''}>🚘 Hatchback</option>
+        <option value="Luxury" ${category === 'Luxury' ? 'selected' : ''}>🏎️ Luxury</option>
+        <option value="Sports" ${category === 'Sports' ? 'selected' : ''}>⚡ Sports</option>
+        <option value="Electric" ${category === 'Electric' ? 'selected' : ''}>🔋 Electric</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-info-circle"></i> Status</label>
+      <select id="editCarStatus" class="form-control">
+        <option value="ACTIVE" ${status === 'ACTIVE' ? 'selected' : ''}>Active</option>
+        <option value="INACTIVE" ${status === 'INACTIVE' ? 'selected' : ''}>Inactive</option>
+        <option value="SOLD" ${status === 'SOLD' ? 'selected' : ''}>Sold</option>
+      </select>
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn btn-primary" onclick="updateCarAdmin()">
+        <i class="fas fa-save"></i> Update Car
+      </button>
+      <button class="btn btn-secondary" onclick="hideModal('carDetailsModal')">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+  `;
+  
+  showModal('carDetailsModal');
+}
+
+function updateCarAdmin() {
+  const carId = document.getElementById('editCarId').value;
+  const title = document.getElementById('editCarTitle').value.trim();
+  const price = document.getElementById('editCarPrice').value;
+  const dealerPrice = document.getElementById('editCarDealerPrice').value;
+  const description = document.getElementById('editCarDesc').value.trim();
+  const images = document.getElementById('editCarImages').value.trim();
+  const category = document.getElementById('editCarCategory').value;
+  const status = document.getElementById('editCarStatus').value;
+  
+  if (!title || !price || !dealerPrice || !description || !category || !status) {
+    alert('❌ Please fill all fields');
+    return;
+  }
+  
+  const imageArray = images ? images.split(',').map(img => img.trim()).filter(img => img) : [];
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'updateCar',
+      carId: carId,
+      title: title,
+      price: parseFloat(price),
+      dealerPrice: parseFloat(dealerPrice),
+      description: description,
+      images: imageArray,
+      category: category,
+      status: status
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'updated') {
+      alert('✅ Car updated successfully!');
+      hideModal('carDetailsModal');
+      loadAllCars();
+      loadAdminDashboard();
+    } else {
+      alert('❌ Failed to update car: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => {
+    alert('❌ Error updating car: ' + err.message);
+  });
+}
+
+function showCompleteCarDetailsForm(carId) {
+  const car = allCars.find(c => c[0] == carId);
+  if (!car) return;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getCarCompleteDetails',
+      carId: carId
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    const existingDetails = data.completeDetails || [];
+    
+    document.getElementById('carDetailsAdminContent').innerHTML = `
+      <input type="hidden" id="adminCarId" value="${carId}">
+      <h4 style="color: #1e293b; margin-bottom: 1.5rem;">
+        <i class="fas fa-info-circle"></i> Complete Car Details for: ${car[3]}
+      </h4>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label><i class="fas fa-engine"></i> Engine CC</label>
+          <input type="text" id="adminCarEngineCC" class="form-control" 
+                 value="${existingDetails[2] || ''}" 
+                 placeholder="e.g., 1998 cc">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-cogs"></i> Cylinders</label>
+          <input type="text" id="adminCarCylinders" class="form-control" 
+                 value="${existingDetails[3] || ''}" 
+                 placeholder="e.g., 4">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-bolt"></i> Torque (Nm)</label>
+          <input type="text" id="adminCarTorque" class="form-control" 
+                 value="${existingDetails[4] || ''}" 
+                 placeholder="e.g., 320 Nm">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-horse"></i> Horsepower (bhp)</label>
+          <input type="text" id="adminCarHorsepower" class="form-control" 
+                 value="${existingDetails[5] || ''}" 
+                 placeholder="e.g., 168 bhp">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-tachometer-alt"></i> Top Speed (km/h)</label>
+          <input type="text" id="adminCarTopSpeed" class="form-control" 
+                 value="${existingDetails[6] || ''}" 
+                 placeholder="e.g., 210 km/h">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-list"></i> Variants</label>
+          <input type="text" id="adminCarVariants" class="form-control" 
+                 value="${existingDetails[7] || ''}" 
+                 placeholder="e.g., XE, XM, XV">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-gas-pump"></i> Fuel Models</label>
+          <input type="text" id="adminCarFuelModels" class="form-control" 
+                 value="${existingDetails[8] || ''}" 
+                 placeholder="e.g., Petrol, Diesel, Hybrid">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-chair"></i> Seats</label>
+          <input type="text" id="adminCarSeats" class="form-control" 
+                 value="${existingDetails[9] || ''}" 
+                 placeholder="e.g., 5">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-shield-alt"></i> Airbags</label>
+          <input type="text" id="adminCarAirbags" class="form-control" 
+                 value="${existingDetails[10] || ''}" 
+                 placeholder="e.g., 6">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-star"></i> NCAP Rating</label>
+          <input type="text" id="adminCarNCAP" class="form-control" 
+                 value="${existingDetails[11] || ''}" 
+                 placeholder="e.g., 5 Stars">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-road"></i> Mileage (km/l)</label>
+          <input type="text" id="adminCarMileage" class="form-control" 
+                 value="${existingDetails[12] || ''}" 
+                 placeholder="e.g., 15 km/l">
+        </div>
+      </div>
+      
+      <div class="form-group" style="grid-column: span 2;">
+        <label><i class="fas fa-plus-circle"></i> Pros</label>
+        <textarea id="adminCarPros" class="form-control" rows="3" placeholder="List the advantages (one per line)">${existingDetails[13] || ''}</textarea>
+      </div>
+      
+      <div class="form-group" style="grid-column: span 2;">
+        <label><i class="fas fa-minus-circle"></i> Cons</label>
+        <textarea id="adminCarCons" class="form-control" rows="3" placeholder="List the disadvantages (one per line)">${existingDetails[14] || ''}</textarea>
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 20px; grid-column: span 2;">
+        <button class="btn btn-primary" onclick="saveCompleteCarDetails()">
+          <i class="fas fa-save"></i> Save Complete Details
+        </button>
+        <button class="btn btn-secondary" onclick="hideModal('carDetailsAdminModal')">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
+    `;
+    
+    showModal('carDetailsAdminModal');
+  })
+  .catch(err => {
+    console.error('Error loading existing details:', err);
+    alert('❌ Error loading car details');
+  });
+}
+
+function saveCompleteCarDetails() {
+  const carId = document.getElementById('adminCarId').value;
+  const engineCC = document.getElementById('adminCarEngineCC').value.trim();
+  const cylinders = document.getElementById('adminCarCylinders').value.trim();
+  const torque = document.getElementById('adminCarTorque').value.trim();
+  const horsepower = document.getElementById('adminCarHorsepower').value.trim();
+  const topSpeed = document.getElementById('adminCarTopSpeed').value.trim();
+  const variants = document.getElementById('adminCarVariants').value.trim();
+  const fuelModels = document.getElementById('adminCarFuelModels').value.trim();
+  const seats = document.getElementById('adminCarSeats').value.trim();
+  const airbags = document.getElementById('adminCarAirbags').value.trim();
+  const ncapRating = document.getElementById('adminCarNCAP').value.trim();
+  const mileage = document.getElementById('adminCarMileage').value.trim();
+  const pros = document.getElementById('adminCarPros').value.trim();
+  const cons = document.getElementById('adminCarCons').value.trim();
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'addCarCompleteDetails',
+      carId: carId,
+      engine_cc: engineCC,
+      cylinders: cylinders,
+      torque: torque,
+      horsepower: horsepower,
+      top_speed: topSpeed,
+      variants: variants,
+      fuel_models: fuelModels,
+      seats: seats,
+      airbags: airbags,
+      ncap_rating: ncapRating,
+      mileage: mileage,
+      pros: pros,
+      cons: cons
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'complete_details_added' || data.status === 'details_added') {
+      alert('✅ Complete car details saved successfully');
+      hideModal('carDetailsAdminModal');
+    } else {
+      alert('❌ Failed to save car details: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => {
+    alert('❌ Error: ' + err.message);
+  });
+}
+
+function deleteCarAdmin(carId) {
+  if (!confirm('Are you sure you want to delete this car? This action cannot be undone.')) return;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'deleteCar',
+      carId: carId
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'deleted') {
+      alert('✅ Car deleted successfully');
+      hideModal('carDetailsModal');
+      loadAllCars();
+      loadAdminDashboard();
+    } else {
+      alert('❌ Failed to delete car: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => {
+    alert('❌ Error: ' + err.message);
+  });
+}
+
+function showAddCarModal() {
+  document.getElementById('addCarAdminContent').innerHTML = `
+    <h4 style="color: #1e293b; margin-bottom: 1.5rem;">
+      <i class="fas fa-plus-circle"></i> Add New Car
+    </h4>
+    
+    <div class="form-group">
+      <label><i class="fas fa-heading"></i> Car Title</label>
+      <input type="text" id="newCarTitle" class="form-control" placeholder="Car title">
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-tag"></i> User Price (₹)</label>
+      <input type="number" id="newCarPrice" class="form-control" placeholder="Price shown to all users">
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-user-tie"></i> Dealer Price (₹)</label>
+      <input type="number" id="newCarDealerPrice" class="form-control" placeholder="Price shown to active dealers only">
+      <small style="color: #64748b;">Only visible to active dealer accounts</small>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-align-left"></i> Description</label>
+      <textarea id="newCarDesc" class="form-control" rows="4" placeholder="Description"></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-image"></i> Image URLs (comma separated)</label>
+      <input type="text" id="newCarImages" class="form-control" placeholder="Image URLs">
+      <small style="color: #64748b;">Separate multiple URLs with commas</small>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-folder"></i> Category</label>
+      <select id="newCarCategory" class="form-control">
+        <option value="">Select Category</option>
+        <option value="SUV">🚙 SUV</option>
+        <option value="Sedan">🚗 Sedan</option>
+        <option value="Hatchback">🚘 Hatchback</option>
+        <option value="Luxury">🏎️ Luxury</option>
+        <option value="Sports">⚡ Sports</option>
+        <option value="Electric">🔋 Electric</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-user-tag"></i> Owner Role</label>
+      <select id="newCarOwnerRole" class="form-control">
+        <option value="user">👤 User</option>
+        <option value="dealer">🏢 Dealer</option>
+        <option value="admin">👑 Admin</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-envelope"></i> Owner Email</label>
+      <input type="email" id="newCarOwnerEmail" class="form-control" placeholder="owner@example.com">
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn btn-primary" onclick="addNewCar()">
+        <i class="fas fa-plus"></i> Add Car
+      </button>
+      <button class="btn btn-secondary" onclick="hideModal('addCarAdminModal')">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+  `;
+  
+  showModal('addCarAdminModal');
+}
+
+function addNewCar() {
+  const title = document.getElementById('newCarTitle').value.trim();
+  const price = document.getElementById('newCarPrice').value;
+  const dealerPrice = document.getElementById('newCarDealerPrice').value;
+  const description = document.getElementById('newCarDesc').value.trim();
+  const images = document.getElementById('newCarImages').value.trim();
+  const category = document.getElementById('newCarCategory').value;
+  const ownerRole = document.getElementById('newCarOwnerRole').value;
+  const ownerEmail = document.getElementById('newCarOwnerEmail').value.trim();
+  
+  if (!title || !price || !description || !category || !ownerEmail) {
+    alert('❌ Please fill all required fields');
+    return;
+  }
+  
+  const imageArray = images ? images.split(',').map(img => img.trim()).filter(img => img) : [];
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'addCar',
+      title: title,
+      price: parseFloat(price),
+      dealerPrice: dealerPrice ? parseFloat(dealerPrice) : parseFloat(price),
+      description: description,
+      images: imageArray,
+      category: category,
+      role: ownerRole,
+      email: ownerEmail
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'car_added') {
+      alert('✅ Car added successfully!');
+      hideModal('addCarAdminModal');
+      loadAllCars();
+      loadAdminDashboard();
+    } else {
+      alert('❌ Failed to add car: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => {
+    alert('❌ Error adding car: ' + err.message);
+  });
+}
+
+/* ==================== CONTACT REQUESTS ==================== */
+function loadAllRequests() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getContactRequests',
+      email: currentUser.email
+    })
+  })
+  .then(response => response.json())
+  .then(requests => {
+    if (requests && !requests.status) {
+      allRequests = requests;
+      displayRequests(requests);
+    } else if (requests && requests.status === 'error') {
+      console.error('Error loading requests:', requests.message);
+      displayRequests([]);
+    } else {
+      allRequests = [];
+      displayRequests([]);
+    }
+  })
+  .catch(err => {
+    console.error('Error loading requests:', err);
+    displayRequests([]);
+  });
+}
+
+function displayRequests(requests) {
+  const container = document.getElementById('requestsContainer');
+  
+  if (!requests || requests.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📨</div>
+        <h3>No Contact Requests</h3>
+        <p>No contact requests have been made yet.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = `
+    <div style="overflow-x: auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Car ID</th>
+            <th>Requester Email</th>
+            <th>Requester Role</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  
+  requests.forEach(request => {
+    const [carId, requesterEmail, requesterRole, date] = request;
+    html += `
+      <tr>
+        <td>${carId}</td>
+        <td>${requesterEmail}</td>
+        <td><span class="user-badge ${requesterRole}" style="font-size: 0.8rem;">${requesterRole}</span></td>
+        <td>${new Date(date).toLocaleString()}</td>
+        <td>
+          <button class="btn btn-primary btn-small" onclick="viewRequestDetails('${carId}', '${requesterEmail}')">
+            <i class="fas fa-info-circle"></i> Details
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+  
+  html += `
+        </tbody>
+      </table>
+      <p style="text-align: center; padding: 10px; color: #64748b; font-size: 0.9rem;">
+        Total Requests: ${requests.length}
+      </p>
+    </div>
+  `;
+  
+  container.innerHTML = html;
+}
+
+function viewRequestDetails(carId, requesterEmail) {
+  const car = allCars.find(c => c[0] == carId);
+  if (!car) {
+    alert('Car not found');
+    return;
+  }
+  
+  const owner = allUsers.find(u => u[0] === car[2]);
+  const requester = allUsers.find(u => u[0] === requesterEmail);
+  
+  document.getElementById('requestDetailsContent').innerHTML = `
+    <div class="details-grid">
+      <div class="detail-item">
+        <h4><i class="fas fa-car"></i> Car Information</h4>
+        <p><strong>Car ID:</strong> ${carId}</p>
+        <p><strong>Car Name:</strong> ${car[3] || 'Unknown'}</p>
+        <p><strong>Price:</strong> ₹${Number(car[4]).toLocaleString()}</p>
+      </div>
+      
+      <div class="detail-item">
+        <h4><i class="fas fa-user-tie"></i> Owner Information</h4>
+        <p><strong>Name:</strong> ${owner ? owner[3] : 'Unknown'}</p>
+        <p><strong>Email:</strong> ${car[2]}</p>
+        <p><strong>Phone:</strong> ${owner ? owner[4] : 'Not available'}</p>
+        <p><strong>Role:</strong> ${car[1]}</p>
+      </div>
+      
+      <div class="detail-item">
+        <h4><i class="fas fa-user"></i> Requester Information</h4>
+        <p><strong>Name:</strong> ${requester ? requester[3] : requesterEmail}</p>
+        <p><strong>Email:</strong> ${requesterEmail}</p>
+        <p><strong>Phone:</strong> ${requester ? requester[4] : 'Not available'}</p>
+        <p><strong>Role:</strong> ${requester ? requester[2] : 'user'}</p>
+      </div>
+      
+      <div class="detail-item">
+        <h4><i class="fas fa-clock"></i> Request Details</h4>
+        <p><strong>Status:</strong> <span style="color:#f59e0b;font-weight:600;">PENDING</span></p>
+        <p><strong>Note:</strong> User wants to contact owner for this car</p>
+      </div>
+    </div>
+    
+    <div style="margin-top: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 12px; border-left: 4px solid #3b82f6;">
+      <h4 style="color: #1e40af; margin-bottom: 1rem;">
+        <i class="fas fa-info-circle"></i> Admin Actions
+      </h4>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn btn-success" onclick="markRequestAsCompleted('${carId}', '${requesterEmail}')">
+          <i class="fas fa-check"></i> Mark as Completed
+        </button>
+        <button class="btn btn-primary" onclick="sendOwnerDetails('${car[2]}', '${requesterEmail}', '${carId}')">
+          <i class="fas fa-paper-plane"></i> Send Owner Details
+        </button>
+        <button class="btn btn-secondary" onclick="hideModal('requestDetailsModal')">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+  `;
+  
+  showModal('requestDetailsModal');
+}
+
+function sendOwnerDetails(ownerEmail, requesterEmail, carId) {
+  const owner = allUsers.find(u => u[0] === ownerEmail);
+  if (!owner) {
+    alert('Owner details not found');
+    return;
+  }
+  
+  const ownerDetails = `
+    Owner Name: ${owner[3]}
+    Email: ${owner[0]}
+    Phone: ${owner[4]}
+    Address: ${owner[5]}
+    Car ID: ${carId}
+  `;
+  
+  alert(`Owner details for car ${carId}:\n\n${ownerDetails}\n\nYou can now contact the requester with these details.`);
+}
+
+function markRequestAsCompleted(carId, requesterEmail) {
+  if (confirm('Mark this request as completed?')) {
+    alert('✅ Request marked as completed');
+    hideModal('requestDetailsModal');
+    loadAllRequests();
+    loadAdminDashboard();
+  }
+}
+
+/* ==================== VIEWS TRACKING ==================== */
+function loadAllViews() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getAllViews' })
+  })
+  .then(response => response.json())
+  .then(views => {
+    if (views && !views.status) {
+      allViews = views;
+      displayViews(views);
+    } else if (views && views.status === 'error') {
+      console.error('Error loading views:', views.message);
+      displayViews([]);
+    } else {
+      allViews = [];
+      displayViews([]);
+    }
+  })
+  .catch(err => {
+    console.error('Error loading views:', err);
+    displayViews([]);
+  });
+}
+
+function displayViews(views) {
+  const container = document.getElementById('viewsContainer');
+  
+  if (!views || views.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">👁️</div>
+        <h3>No Views Recorded</h3>
+        <p>No car views have been recorded yet.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = `
+    <div style="overflow-x: auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Car ID</th>
+            <th>Viewer Email</th>
+            <th>Viewer Role</th>
+            <th>View Time</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  
+  views.slice(0, 50).forEach(view => {
+    const [carId, email, role, viewedAt] = view;
+    const car = allCars.find(c => c[0] == carId);
+    const carName = car ? car[3] : 'Unknown Car';
+    
+    html += `
+      <tr>
+        <td>${carId} (${carName})</td>
+        <td>${email}</td>
+        <td><span class="user-badge ${role}" style="font-size: 0.8rem;">${role}</span></td>
+        <td>${new Date(viewedAt).toLocaleString()}</td>
+        <td>
+          <button class="btn btn-primary btn-small" onclick="viewCarDetailsAdmin('${carId}')">
+            <i class="fas fa-eye"></i> View Car
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+  
+  html += `
+        </tbody>
+      </table>
+      <p style="text-align: center; padding: 15px; color: #64748b; font-size: 0.9rem;">
+        Showing ${Math.min(views.length, 50)} of ${views.length} total views
+      </p>
+    </div>
+  `;
+  
+  container.innerHTML = html;
+}
+
+/* ==================== AUCTION MANAGEMENT ==================== */
+function loadAllAuctions() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getAllAuctions' })
+  })
+  .then(response => response.json())
+  .then(auctions => {
+    if (auctions && !auctions.status) {
+      allAuctions = auctions;
+      displayAuctions(auctions);
+    } else if (auctions && auctions.status === 'error') {
+      console.error('Error loading auctions:', auctions.message);
+      displayAuctions([]);
+    } else {
+      allAuctions = [];
+      displayAuctions([]);
+    }
+  })
+  .catch(err => {
+    console.error('Error loading auctions:', err);
+    displayAuctions([]);
+  });
+}
+
+function displayAuctions(auctions) {
+  const container = document.getElementById('auctionsContainer');
+  
+  if (!auctions || auctions.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">⚡</div>
+        <h3>No Active Auctions</h3>
+        <p>No auctions are currently active. Start a new auction for premium cars.</p>
+        <button class="btn btn-primary" onclick="showStartAuctionModal()" style="margin-top: 1.5rem;">
+          <i class="fas fa-plus"></i> Start New Auction
+        </button>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = '';
+  
+  auctions.forEach(auction => {
+    const [auctionId, carId, status, startPrice, startTime, endTime] = auction;
+    const car = allCars.find(c => c[0] == carId);
+    
+    if (!car) return;
+    
+    const auctionCard = document.createElement('div');
+    auctionCard.className = 'car-card';
+    auctionCard.innerHTML = `
+      <span class="car-status ${status === 'ACTIVE' ? 'status-active' : 'status-sold'}">
+        ${status === 'ACTIVE' ? 'AUCTION LIVE' : 'AUCTION ENDED'}
+      </span>
+      <div class="car-image-container">
+        <img src="${car[7] ? JSON.parse(car[7])[0] : 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341'}" 
+             alt="${car[3]}" class="car-image">
+      </div>
+      <div class="car-content">
+        <h3 class="car-title">${car[3]}</h3>
+        <p class="car-price"><i class="fas fa-gavel"></i> Starting Price: ₹${Number(startPrice).toLocaleString()}</p>
+        <div class="car-meta">
+          <span><i class="fas fa-calendar"></i> Started: ${new Date(startTime).toLocaleDateString()}</span>
+          ${endTime ? `<span><i class="fas fa-clock"></i> Ends: ${new Date(endTime).toLocaleDateString()}</span>` : ''}
+        </div>
+        <div class="car-actions">
+          <button class="btn btn-primary btn-small" onclick="viewAuctionDetails('${auctionId}')">
+            <i class="fas fa-eye"></i> View Bids
+          </button>
+          ${status === 'ACTIVE' ? `
+            <button class="btn btn-danger btn-small" onclick="closeAuction('${auctionId}')">
+              <i class="fas fa-times"></i> End Auction
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+    
+    container.appendChild(auctionCard);
+  });
+}
+
+function showStartAuctionModal(preSelectedCarId = null) {
+  let carId = preSelectedCarId;
+  
+  if (!carId) {
+    document.getElementById('startAuctionContent').innerHTML = `
+      <h4 style="color: #1e293b; margin-bottom: 1.5rem;">Select a car for auction:</h4>
+      <div style="max-height: 300px; overflow-y: auto;">
+    `;
+    
+    const auctionCars = allCars.filter(car => 
+      car[9] === 'ACTIVE'
+    );
+    
+    if (auctionCars.length === 0) {
+      document.getElementById('startAuctionContent').innerHTML += `
+        <p style="color: #64748b; text-align: center; padding: 20px;">No cars available for auction</p>
+      `;
+    } else {
+      auctionCars.forEach(car => {
+        const [id, ownerRole, ownerEmail, title, price] = car;
+        document.getElementById('startAuctionContent').innerHTML += `
+          <div style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s;"
+               onclick="selectCarForAuction('${id}', '${title}', ${price})"
+               onmouseover="this.style.backgroundColor='#f1f5f9'"
+               onmouseout="this.style.backgroundColor='white'">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <p style="font-weight: 600; color: #1e293b; margin-bottom: 5px;">${title}</p>
+                <p style="color: #64748b; font-size: 0.9rem;">
+                  <i class="fas fa-user-tag"></i> ${ownerRole} • <i class="fas fa-tag"></i> ₹${price.toLocaleString()}
+                </p>
+              </div>
+              <i class="fas fa-chevron-right" style="color: #64748b;"></i>
+            </div>
+          </div>
+        `;
+      });
+    }
+    
+    document.getElementById('startAuctionContent').innerHTML += `
+      </div>
+      <div id="auctionForm" style="display: none; margin-top: 2rem;">
+      </div>
+    `;
+  } else {
+    const car = allCars.find(c => c[0] == carId);
+    if (car) {
+      selectCarForAuction(carId, car[3], car[4]);
+    }
+  }
+  
+  showModal('startAuctionModal');
+}
+
+let selectedCarForAuction = null;
+
+function selectCarForAuction(carId, carTitle, currentPrice) {
+  selectedCarForAuction = { carId, carTitle, currentPrice };
+  
+  document.getElementById('startAuctionContent').innerHTML = `
+    <h4 style="color: #1e293b; margin-bottom: 1.5rem;">Start Auction for: ${carTitle}</h4>
+    
+    <div class="form-group">
+      <label><i class="fas fa-tag"></i> Starting Price (₹)</label>
+      <input type="number" id="auctionStartPrice" class="form-control" value="${currentPrice}" placeholder="Enter starting price">
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-clock"></i> Auction Duration (Hours)</label>
+      <input type="number" id="auctionDuration" class="form-control" value="24" min="1" max="168">
+      <small style="color: #64748b;">Auction will end automatically after this duration</small>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-info-circle"></i> Auction Description (Optional)</label>
+      <textarea id="auctionDescription" class="form-control" rows="3" placeholder="Describe the auction terms">Live auction for ${carTitle}. Bidding starts at ₹${currentPrice.toLocaleString()}.</textarea>
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn btn-primary" onclick="startAuctionFinal()">
+        <i class="fas fa-gavel"></i> Start Auction
+      </button>
+      <button class="btn btn-secondary" onclick="hideModal('startAuctionModal')">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+  `;
+}
+
+function startAuctionFinal() {
+  if (!selectedCarForAuction) return;
+  
+  const startPrice = document.getElementById('auctionStartPrice').value;
+  const duration = document.getElementById('auctionDuration').value;
+  const description = document.getElementById('auctionDescription').value.trim();
+  
+  if (!startPrice || !duration) {
+    alert('Please fill all required fields');
+    return;
+  }
+  
+  const endTime = new Date(Date.now() + (parseInt(duration) * 60 * 60 * 1000));
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'startAuction',
+      carId: selectedCarForAuction.carId,
+      startPrice: parseFloat(startPrice),
+      duration: parseInt(duration),
+      endTime: endTime.toISOString(),
+      description: description
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'auction_started') {
+      alert('✅ Auction started successfully!');
+      hideModal('startAuctionModal');
+      loadAllAuctions();
+      loadAdminDashboard();
+    } else {
+      alert('❌ Failed to start auction: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => {
+    alert('❌ Error starting auction: ' + err.message);
+  });
+}
+
+function viewAuctionDetails(auctionId) {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getBids',
+      auctionId: auctionId
+    })
+  })
+  .then(response => response.json())
+  .then(bids => {
+    const auction = allAuctions.find(a => a[0] == auctionId);
+    if (!auction) return;
+    
+    const car = allCars.find(c => c[0] == auction[1]);
+    if (!car) return;
+    
+    document.getElementById('auctionDetailTitle').innerHTML = `<i class="fas fa-gavel"></i> Auction Bids: ${car[3]}`;
+    
+    let bidsHtml = '';
+    if (!bids || bids.length === 0) {
+      bidsHtml = '<p style="color: #64748b; text-align: center; padding: 20px;">No bids yet</p>';
+    } else {
+      bidsHtml = `
+        <div style="max-height: 300px; overflow-y: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Dealer Email</th>
+                <th>Bid Amount</th>
+                <th>Bid Time</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      
+      bids.sort((a, b) => b[2] - a[2]);
+      
+      bids.forEach(bid => {
+        const [auctionId, dealerEmail, bidAmount, bidTime] = bid;
+        bidsHtml += `
+          <tr>
+            <td>${dealerEmail}</td>
+            <td style="color: #10b981; font-weight: 600;">₹${Number(bidAmount).toLocaleString()}</td>
+            <td>${new Date(bidTime).toLocaleString()}</td>
+          </tr>
+        `;
+      });
+      
+      bidsHtml += `
+            </tbody>
+          </table>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 10px;">
+          <h4 style="color: #1e40af; margin-bottom: 10px;">
+            <i class="fas fa-trophy"></i> Current Highest Bid
+          </h4>
+          <p style="font-size: 1.5rem; font-weight: 700; color: #10b981;">
+            ₹${Number(bids[0][2]).toLocaleString()}
+          </p>
+          <p style="color: #64748b; margin-top: 5px;">
+            By: ${bids[0][1]}
+          </p>
+        </div>
+      `;
+    }
+    
+    document.getElementById('auctionDetailsContent').innerHTML = `
+      <div class="details-grid">
+        <div class="detail-item">
+          <h4><i class="fas fa-car"></i> Car</h4>
+          <p>${car[3]}</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-tag"></i> Starting Price</h4>
+          <p>₹${Number(auction[3]).toLocaleString()}</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-info-circle"></i> Status</h4>
+          <p>${auction[2]}</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-calendar"></i> Started</h4>
+          <p>${new Date(auction[4]).toLocaleString()}</p>
+        </div>
+      </div>
+      
+      <h4 style="color: #1e293b; margin: 2rem 0 1rem;">
+        <i class="fas fa-gavel"></i> Bid History
+      </h4>
+      ${bidsHtml}
+      
+      <div style="display: flex; gap: 10px; margin-top: 2rem;">
+        <button class="btn btn-primary" onclick="closeAuction('${auctionId}')" ${auction[2] !== 'ACTIVE' ? 'disabled' : ''}>
+          <i class="fas fa-times"></i> End Auction
+        </button>
+        <button class="btn btn-secondary" onclick="hideModal('auctionDetailsModal')">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    `;
+    
+    showModal('auctionDetailsModal');
+  })
+  .catch(err => {
+    console.error('Error loading bids:', err);
+    alert('❌ Error loading auction bids');
+  });
+}
+
+function closeAuction(auctionId) {
+  if (!confirm('Are you sure you want to end this auction? This cannot be undone.')) return;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'closeAuction',
+      auctionId: auctionId
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'closed') {
+      alert('✅ Auction closed successfully!');
+      hideModal('auctionDetailsModal');
+      loadAllAuctions();
+      loadAdminDashboard();
+      
+      if (data.winner) {
+        alert(`🏆 Auction Winner:\n\nDealer: ${data.winner.dealerEmail || data.winner[1]}\nWinning Bid: ₹${Number(data.winner.bidAmount || data.winner[2]).toLocaleString()}`);
+      }
+    } else {
+      alert('❌ Failed to close auction: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => {
+    alert('❌ Error closing auction: ' + err.message);
+  });
+}
+
+/* ==================== PAYMENTS ==================== */
+function loadAllPayments() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getAllPayments' })
+  })
+  .then(response => response.json())
+  .then(payments => {
+    if (payments && !payments.status) {
+      allPayments = payments;
+    } else {
+      allPayments = [];
+    }
+  })
+  .catch(err => {
+    console.error('Error loading payments:', err);
+    allPayments = [];
+  });
+}
+
+/* ==================== REPORTS ==================== */
+function loadReports() {
+  showReportTab('overview');
+}
+
+function showReportTab(tab) {
+  document.querySelectorAll('#reports .tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  const container = document.getElementById('reportsContainer');
+  
+  switch(tab) {
+    case 'overview':
+      const totalCarsWorth = allCars.reduce((sum, car) => sum + (Number(car[4]) || 0), 0);
+      const dealers = allUsers.filter(user => user[2] === 'dealer');
+      
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'getAllPayments' })
+      })
+      .then(response => response.json())
+      .then(payments => {
+        const totalRevenue = payments.reduce((sum, payment) => {
+          if (payment[4] === 'SUCCESS') {
+            return sum + (parseFloat(payment[2]) || 0);
+          }
+          return sum;
+        }, 0);
+        
+        displayOverviewReport(totalRevenue, totalCarsWorth, dealers.length);
+      })
+      .catch(err => {
+        displayOverviewReport(0, totalCarsWorth, dealers.length);
+      });
+      break;
+      
+    case 'users':
+      displayUsersReport();
+      break;
+      
+    case 'cars':
+      displayCarsReport();
+      break;
+      
+    case 'revenue':
+      displayRevenueReport();
+      break;
+  }
+}
+
+function displayOverviewReport(totalRevenue, totalCarsWorth, dealerCount) {
+  const container = document.getElementById('reportsContainer');
+  
+  container.innerHTML = `
+    <div class="admin-grid">
+      <div class="admin-stat-card">
+        <h4>Total Users</h4>
+        <div class="stat">${allUsers.length}</div>
+      </div>
+      <div class="admin-stat-card">
+        <h4>Active Dealers</h4>
+        <div class="stat">${dealerCount}</div>
+      </div>
+      <div class="admin-stat-card">
+        <h4>Total Cars</h4>
+        <div class="stat">${allCars.length}</div>
+      </div>
+      <div class="admin-stat-card">
+        <h4>Active Cars</h4>
+        <div class="stat">${allCars.filter(car => car[9] === 'ACTIVE').length}</div>
+      </div>
+      <div class="admin-stat-card">
+        <h4>Total Cars Worth</h4>
+        <div class="stat">₹${totalCarsWorth.toLocaleString()}</div>
+      </div>
+      <div class="admin-stat-card">
+        <h4>Total Revenue</h4>
+        <div class="stat">₹${totalRevenue.toLocaleString()}</div>
+      </div>
+    </div>
+    
+    <div style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <h4 style="color: #1e293b; margin-bottom: 1rem;">
+          <i class="fas fa-chart-pie"></i> Car Status Distribution
+        </h4>
+        <div style="height: 200px; display: flex; align-items: flex-end; gap: 10px; margin-top: 1rem;">
+          <div style="flex: 1; background: #10b981; height: ${(allCars.filter(car => car[9] === 'ACTIVE').length / (allCars.length || 1)) * 200}px; 
+               border-radius: 8px 8px 0 0; position: relative;">
+            <div style="position: absolute; top: -25px; left: 0; right: 0; text-align: center; color: #10b981; font-weight: 600;">
+              ${allCars.filter(car => car[9] === 'ACTIVE').length}
+            </div>
+            <div style="position: absolute; bottom: -25px; left: 0; right: 0; text-align: center; font-size: 0.8rem; color: #64748b;">
+              Active
+            </div>
+          </div>
+          <div style="flex: 1; background: #ef4444; height: ${(allCars.filter(car => car[9] === 'INACTIVE').length / (allCars.length || 1)) * 200}px; 
+               border-radius: 8px 8px 0 0; position: relative;">
+            <div style="position: absolute; top: -25px; left: 0; right: 0; text-align: center; color: #ef4444; font-weight: 600;">
+              ${allCars.filter(car => car[9] === 'INACTIVE').length}
+            </div>
+            <div style="position: absolute; bottom: -25px; left: 0; right: 0; text-align: center; font-size: 0.8rem; color: #64748b;">
+              Inactive
+            </div>
+          </div>
+          <div style="flex: 1; background: #f59e0b; height: ${(allCars.filter(car => car[9] === 'SOLD').length / (allCars.length || 1)) * 200}px; 
+               border-radius: 8px 8px 0 0; position: relative;">
+            <div style="position: absolute; top: -25px; left: 0; right: 0; text-align: center; color: #f59e0b; font-weight: 600;">
+              ${allCars.filter(car => car[9] === 'SOLD').length}
+            </div>
+            <div style="position: absolute; bottom: -25px; left: 0; right: 0; text-align: center; font-size: 0.8rem; color: #64748b;">
+              Sold
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <h4 style="color: #1e293b; margin-bottom: 1rem;">
+          <i class="fas fa-users"></i> User Role Distribution
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 1rem;">
+          <div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <span style="color: #64748b;">👤 Users</span>
+              <span style="font-weight: 600;">${allUsers.filter(user => user[2] === 'user').length}</span>
+            </div>
+            <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="height: 100%; background: #3b82f6; width: ${(allUsers.filter(user => user[2] === 'user').length / (allUsers.length || 1)) * 100}%"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <span style="color: #64748b;">🏢 Dealers</span>
+              <span style="font-weight: 600;">${allUsers.filter(user => user[2] === 'dealer').length}</span>
+            </div>
+            <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="height: 100%; background: #10b981; width: ${(allUsers.filter(user => user[2] === 'dealer').length / (allUsers.length || 1)) * 100}%"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <span style="color: #64748b;">👑 Admins</span>
+              <span style="font-weight: 600;">${allUsers.filter(user => user[2] === 'admin').length}</span>
+            </div>
+            <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="height: 100%; background: #ef4444; width: ${(allUsers.filter(user => user[2] === 'admin').length / (allUsers.length || 1)) * 100}%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function displayUsersReport() {
+  const container = document.getElementById('reportsContainer');
+  
+  container.innerHTML = `
+    <h4 style="color: #1e293b; margin-bottom: 1rem;">
+      <i class="fas fa-users"></i> User Statistics
+    </h4>
+    <div style="overflow-x: auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Phone</th>
+            <th>Dealer Status</th>
+            <th>Cars Listed</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${allUsers.map(user => {
+            const [email, , role, name, phone, , dealerActive] = user;
+            const carsListed = allCars.filter(car => car[2] === email).length;
+            return `
+              <tr>
+                <td>${email}</td>
+                <td>${name}</td>
+                <td><span class="user-badge ${role}" style="font-size: 0.8rem;">${role}</span></td>
+                <td>${phone}</td>
+                <td>${dealerActive === 'YES' ? '✅ Active' : role === 'dealer' ? '❌ Inactive' : 'N/A'}</td>
+                <td>${carsListed}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function displayCarsReport() {
+  const container = document.getElementById('reportsContainer');
+  
+  container.innerHTML = `
+    <h4 style="color: #1e293b; margin-bottom: 1rem;">
+      <i class="fas fa-car"></i> Car Statistics
+    </h4>
+    <div style="overflow-x: auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Car ID</th>
+            <th>Title</th>
+            <th>User Price</th>
+            <th>Dealer Price</th>
+            <th>Category</th>
+            <th>Owner</th>
+            <th>Status</th>
+            <th>Views</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${allCars.map(car => {
+            const [id, ownerRole, ownerEmail, title, price, dealerPrice, , , category, status] = car;
+            const views = allViews.filter(view => view[0] == id).length;
+            return `
+              <tr>
+                <td>${id}</td>
+                <td>${title}</td>
+                <td>₹${Number(price).toLocaleString()}</td>
+                <td>₹${Number(dealerPrice).toLocaleString()}</td>
+                <td>${category || 'N/A'}</td>
+                <td>${ownerEmail} (${ownerRole})</td>
+                <td><span class="car-status ${status === 'ACTIVE' ? 'status-active' : status === 'SOLD' ? 'status-sold' : 'status-inactive'}" 
+                      style="position: static; display: inline-block; padding: 3px 8px; font-size: 0.7rem;">${status}</span></td>
+                <td>${views}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function displayRevenueReport() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getAllPayments' })
+  })
+  .then(response => response.json())
+  .then(payments => {
+    const container = document.getElementById('reportsContainer');
+    
+    if (!payments || payments.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">💰</div>
+          <h3>No Payment Data</h3>
+          <p>No payment records found in the system.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = `
+      <h4 style="color: #1e293b; margin-bottom: 1rem;">
+        <i class="fas fa-money-bill-wave"></i> Revenue Report
+      </h4>
+      <div style="overflow-x: auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>User Email</th>
+              <th>Role</th>
+              <th>Amount</th>
+              <th>Payment ID</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${payments.map(payment => {
+              const [email, role, amount, paymentId, status, date] = payment;
+              return `
+                <tr>
+                  <td>${new Date(date).toLocaleDateString()}</td>
+                  <td>${email}</td>
+                  <td><span class="user-badge ${role}" style="font-size: 0.8rem;">${role}</span></td>
+                  <td style="color: #10b981; font-weight: 600;">₹${Number(amount).toLocaleString()}</td>
+                  <td>${paymentId || 'N/A'}</td>
+                  <td><span style="color: ${status === 'SUCCESS' ? '#10b981' : '#ef4444'}; font-weight: 600;">${status}</span></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+      
+      <div style="margin-top: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 12px;">
+        <h4 style="color: #1e40af; margin-bottom: 1rem;">
+          <i class="fas fa-chart-line"></i> Revenue Summary
+        </h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: #10b981;">₹${payments.reduce((sum, p) => p[4] === 'SUCCESS' ? sum + (Number(p[2]) || 0) : sum, 0).toLocaleString()}</div>
+            <div style="color: #64748b; font-size: 0.9rem;">Total Revenue</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: #3b82f6;">${payments.filter(p => p[4] === 'SUCCESS').length}</div>
+            <div style="color: #64748b; font-size: 0.9rem;">Successful Payments</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: #ef4444;">${payments.filter(p => p[4] !== 'SUCCESS').length}</div>
+            <div style="color: #64748b; font-size: 0.9rem;">Failed Payments</div>
+          </div>
+        </div>
+      </div>
+    `;
+  })
+  .catch(err => {
+    const container = document.getElementById('reportsContainer');
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">💰</div>
+        <h3>Error Loading Revenue Data</h3>
+        <p>${err.message}</p>
+      </div>
+    `;
+  });
+}
+</script>
+</body>
+</html>
