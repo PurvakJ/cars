@@ -1,0 +1,3086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Marketplace - Dealer</title>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ==================== COMMON STYLES ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  min-height: 100vh;
+}
+
+/* Header */
+header {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.logo i {
+  font-size: 2rem;
+  color: #a7f3d0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-badge {
+  background: linear-gradient(135deg, #10b981, #059669);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Navigation */
+nav {
+  background: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.nav-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #475569;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn:hover {
+  background: #10b981;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.nav-btn.active {
+  background: #10b981;
+  color: white;
+}
+
+/* Main Container */
+.container {
+  max-width: 1280px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+/* Pages */
+.page {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page.active {
+  display: block;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Car Grid */
+.cars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.car-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.car-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+  border-color: #10b981;
+}
+
+.car-image-container {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.car-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.car-card:hover .car-image {
+  transform: scale(1.05);
+}
+
+.car-content {
+  padding: 1.5rem;
+}
+
+.car-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.car-price {
+  color: #10b981;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.car-price.dealer-price {
+  color: #10b981;
+}
+
+.car-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.car-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.car-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Status Badges */
+.car-status {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  z-index: 2;
+}
+
+.status-active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.status-inactive {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.status-sold {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.status-auction {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+}
+
+/* Buttons */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #64748b, #475569);
+  color: white;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-purple {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s;
+  background: white;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.close-modal {
+  background: #f1f5f9;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #64748b;
+  transition: all 0.3s;
+}
+
+.close-modal:hover {
+  background: #ef4444;
+  color: white;
+  transform: rotate(90deg);
+}
+
+/* Dashboard */
+.dashboard {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.dashboard-sidebar {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  height: fit-content;
+}
+
+.sidebar-menu {
+  list-style: none;
+}
+
+.sidebar-menu li {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-menu button {
+  width: 100%;
+  text-align: left;
+  padding: 14px 20px;
+  border: none;
+  background: none;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s;
+}
+
+.sidebar-menu button:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.sidebar-menu button.active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.dashboard-content {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.dashboard-section {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.dashboard-section.active {
+  display: block;
+}
+
+/* Car Details */
+.car-details-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.car-details-images img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.detail-item {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border-left: 4px solid #10b981;
+}
+
+.detail-item h4 {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.detail-item p {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Search & Filter */
+.search-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+/* Messages */
+.message {
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin: 1.5rem 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.message.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.message.info {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.message.warning {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 12px 24px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  font-weight: 600;
+  color: #64748b;
+  transition: all 0.3s;
+}
+
+.tab:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.tab.active {
+  background: #10b981;
+  color: white;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #94a3b8;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+/* Dealer Stats */
+.dealer-stat-card {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid #bbf7d0;
+  transition: transform 0.3s;
+}
+
+.dealer-stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.dealer-stat-card h4 {
+  color: #065f46;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.dealer-stat-card .stat {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #10b981, #059669);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dealer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Auction Cards */
+.auction-card {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border: 2px solid #f59e0b;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.auction-card::before {
+  content: "🔥 LIVE AUCTION";
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  background: #f59e0b;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.auction-timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #fde68a;
+}
+
+.auction-timer i {
+  color: #f59e0b;
+  font-size: 1.5rem;
+}
+
+.auction-timer span {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #92400e;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+  
+  .search-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .dealer-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .nav-content {
+    justify-content: center;
+  }
+  
+  .cars-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+    margin: 10px;
+  }
+  
+  .car-actions {
+    flex-direction: column;
+  }
+  
+  .user-info {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="logo">
+      <i class="fas fa-car"></i>
+      Car Marketplace - Dealer
+    </div>
+    <div class="user-info">
+      <span id="userEmail"></span>
+      <span id="userRole" class="user-badge">Dealer</span>
+      <span id="dealerStatus" class="user-badge" style="background:linear-gradient(135deg, #f59e0b, #d97706);">Inactive</span>
+      <button id="activateDealerBtn" class="btn btn-warning" onclick="activateDealerAccount()">
+        <i class="fas fa-bolt"></i> Activate Account
+      </button>
+      <button id="logoutBtn" class="btn btn-secondary" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-content">
+    <button class="nav-btn active" onclick="showPage('home')">
+      <i class="fas fa-home"></i> Home
+    </button>
+    <button class="nav-btn" onclick="showPage('cars')">
+      <i class="fas fa-car"></i> Browse Cars
+    </button>
+    <button class="nav-btn" onclick="showPage('dashboard')">
+      <i class="fas fa-tachometer-alt"></i> Dashboard
+    </button>
+    <button id="auctionsNavBtn" class="nav-btn hidden" onclick="showPage('auctions')">
+      <i class="fas fa-gavel"></i> Auctions
+    </button>
+    <button class="nav-btn" onclick="showPage('contact')">
+      <i class="fas fa-phone"></i> Contact
+    </button>
+    <button class="nav-btn" onclick="showAddCarModal()">
+      <i class="fas fa-plus-circle"></i> Add Car
+    </button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Home Page -->
+  <div id="home" class="page active">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-store"></i> Welcome Dealer
+      </div>
+      
+      <div id="dealerStatusMessage" class="message warning">
+        <i class="fas fa-exclamation-triangle"></i> Your dealer account is not activated. Activate now to unlock premium features.
+      </div>
+      
+      <div class="tabs">
+        <button class="tab active" onclick="showDealerInfo('features')">
+          <i class="fas fa-star"></i> Features
+        </button>
+        <button class="tab" onclick="showDealerInfo('benefits')">
+          <i class="fas fa-gift"></i> Benefits
+        </button>
+        <button class="tab" onclick="showDealerInfo('pricing')">
+          <i class="fas fa-tag"></i> Pricing
+        </button>
+      </div>
+      
+      <div id="dealerInfoContent">
+        <div class="dealer-grid">
+          <div class="dealer-stat-card">
+            <h4><i class="fas fa-percentage"></i> Dealer Discount</h4>
+            <div class="stat">10% OFF</div>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">On all cars</p>
+          </div>
+          
+          <div class="dealer-stat-card">
+            <h4><i class="fas fa-eye"></i> Contact Access</h4>
+            <div class="stat">View All</div>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Owner details</p>
+          </div>
+          
+          <div class="dealer-stat-card">
+            <h4><i class="fas fa-gavel"></i> Auctions</h4>
+            <div class="stat">Live Bids</div>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Participate & win</p>
+          </div>
+          
+          <div class="dealer-stat-card">
+            <h4><i class="fas fa-crown"></i> Priority</h4>
+            <div class="stat">VIP Support</div>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">24/7 assistance</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <h2 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+      <i class="fas fa-star"></i> Recently Added Cars
+    </h2>
+    <div id="recentCars" class="cars-grid">
+      <!-- Recent cars will load here -->
+    </div>
+  </div>
+
+  <!-- Cars Page -->
+  <div id="cars" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-car"></i> Browse All Cars
+      </div>
+      
+      <div class="tabs">
+        <button class="tab active" onclick="showCarType('all')">
+          <i class="fas fa-list"></i> All Cars
+        </button>
+        <button class="tab" onclick="showCarType('dealer')">
+          <i class="fas fa-store"></i> Dealer Cars
+        </button>
+        <button class="tab" onclick="showCarType('user')">
+          <i class="fas fa-user"></i> User Cars
+        </button>
+        <button class="tab" onclick="showCarType('admin')">
+          <i class="fas fa-crown"></i> Admin Cars
+        </button>
+      </div>
+      
+      <div class="search-container">
+        <input type="text" id="searchCar" class="form-control" placeholder="🔍 Search cars by name or description..." onkeyup="filterCars()">
+        <select id="filterCategory" class="form-control" onchange="filterCars()">
+          <option value="">📂 All Categories</option>
+          <option value="SUV">🚙 SUV</option>
+          <option value="Sedan">🚗 Sedan</option>
+          <option value="Hatchback">🚘 Hatchback</option>
+          <option value="Luxury">🏎️ Luxury</option>
+          <option value="Sports">⚡ Sports</option>
+          <option value="Electric">🔋 Electric</option>
+        </select>
+        <select id="filterPrice" class="form-control" onchange="filterCars()">
+          <option value="">💰 Price Range</option>
+          <option value="0-500000">Under ₹5L</option>
+          <option value="500000-1000000">₹5L - ₹10L</option>
+          <option value="1000000-2000000">₹10L - ₹20L</option>
+          <option value="2000000-5000000">₹20L - ₹50L</option>
+          <option value="5000000-100000000">Above ₹50L</option>
+        </select>
+      </div>
+    </div>
+    
+    <div id="carsContainer" class="cars-grid">
+      <!-- Cars will load here -->
+    </div>
+  </div>
+
+  <!-- Dashboard Page -->
+  <div id="dashboard" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-tachometer-alt"></i> Dealer Dashboard
+      </div>
+      <p style="color: #64748b;">Manage your dealer profile, cars, and activities</p>
+    </div>
+    
+    <div class="dashboard">
+      <div class="dashboard-sidebar">
+        <ul class="sidebar-menu">
+          <li><button onclick="showDashboardSection('profile')" class="active">
+            <i class="fas fa-user"></i> My Profile
+          </button></li>
+          <li><button onclick="showDashboardSection('myCars')">
+            <i class="fas fa-car"></i> My Cars
+          </button></li>
+          <li><button onclick="showDashboardSection('addCar')">
+            <i class="fas fa-plus-circle"></i> Add New Car
+          </button></li>
+          <li><button onclick="showDashboardSection('requests')">
+            <i class="fas fa-envelope"></i> Contact Requests
+          </button></li>
+          <li><button onclick="showDashboardSection('activity')">
+            <i class="fas fa-chart-line"></i> My Activity
+          </button></li>
+          <li><button onclick="showDashboardSection('stats')">
+            <i class="fas fa-chart-bar"></i> Dealer Stats
+          </button></li>
+          <li><button onclick="showDashboardSection('account')">
+            <i class="fas fa-cog"></i> Account Settings
+          </button></li>
+        </ul>
+      </div>
+      
+      <div class="dashboard-content">
+        <!-- Profile Section -->
+        <div id="dashboardProfile" class="dashboard-section active">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-user-circle"></i> Dealer Profile
+          </h3>
+          
+          <div class="details-grid">
+            <div class="detail-item">
+              <h4>Email</h4>
+              <p id="dashboardUserEmail"></p>
+            </div>
+            <div class="detail-item">
+              <h4>Role</h4>
+              <p id="dashboardUserRole"></p>
+            </div>
+            <div class="detail-item">
+              <h4>Dealer Status</h4>
+              <p id="dashboardDealerStatus"></p>
+            </div>
+            <div class="detail-item">
+              <h4>Name</h4>
+              <p id="dashboardUserName"></p>
+            </div>
+            <div class="detail-item">
+              <h4>Phone</h4>
+              <p id="dashboardUserPhone"></p>
+            </div>
+            <div class="detail-item">
+              <h4>Dealership Name</h4>
+              <p id="dashboardDealershipName"></p>
+            </div>
+          </div>
+          
+          <h4 style="color: #1e293b; margin: 2rem 0 1rem;">
+            <i class="fas fa-edit"></i> Update Dealer Profile
+          </h4>
+          
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Full Name</label>
+            <input type="text" id="dashboardName" class="form-control" placeholder="Enter your full name">
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-store"></i> Dealership Name</label>
+            <input type="text" id="dashboardDealership" class="form-control" placeholder="Enter dealership name">
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Phone Number</label>
+            <input type="tel" id="dashboardPhone" class="form-control" placeholder="Enter your phone number">
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-map-marker-alt"></i> Business Address</label>
+            <textarea id="dashboardAddress" class="form-control" placeholder="Enter your business address" rows="3"></textarea>
+          </div>
+          
+          <button class="btn btn-primary" onclick="updateDashboardProfile()">
+            <i class="fas fa-save"></i> Update Profile
+          </button>
+          <div id="profileMessage" class="message"></div>
+        </div>
+        
+        <!-- My Cars Section -->
+        <div id="dashboardMyCars" class="dashboard-section">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-car"></i> My Cars
+          </h3>
+          <div id="myCarsList" class="cars-grid">
+            <!-- Dealer's cars will load here -->
+          </div>
+        </div>
+        
+        <!-- Add Car Section -->
+        <div id="dashboardAddCar" class="dashboard-section">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-plus-circle"></i> Add New Car
+          </h3>
+          
+          <div class="form-group">
+            <label><i class="fas fa-heading"></i> Car Title</label>
+            <input type="text" id="dashboardCarTitle" class="form-control" placeholder="e.g., Toyota Fortuner 2023">
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-tag"></i> User Price (₹)</label>
+            <input type="number" id="dashboardCarPrice" class="form-control" placeholder="Price shown to regular users">
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-tag"></i> Dealer Price (₹)</label>
+            <input type="number" id="dashboardCarDealerPrice" class="form-control" placeholder="Price shown to active dealers (optional)">
+            <small style="color: #64748b;">If empty, same as user price</small>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-align-left"></i> Description</label>
+            <textarea id="dashboardCarDesc" class="form-control" placeholder="Describe the car features, condition, etc." rows="4"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-image"></i> Image URLs (comma separated)</label>
+            <input type="text" id="dashboardCarImages" class="form-control" placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg">
+            <small style="color: #64748b; display: block; margin-top: 5px;">
+              Add multiple image URLs separated by commas
+            </small>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-folder"></i> Category</label>
+            <select id="dashboardCarCategory" class="form-control">
+              <option value="">Select Category</option>
+              <option value="SUV">🚙 SUV</option>
+              <option value="Sedan">🚗 Sedan</option>
+              <option value="Hatchback">🚘 Hatchback</option>
+              <option value="Luxury">🏎️ Luxury</option>
+              <option value="Sports">⚡ Sports</option>
+              <option value="Electric">🔋 Electric</option>
+            </select>
+          </div>
+          
+          <button class="btn btn-primary btn-block" onclick="addCarFromDashboard()">
+            <i class="fas fa-plus"></i> Add Car
+          </button>
+          <div id="dashboardAddCarMessage" class="message"></div>
+        </div>
+        
+        <!-- Contact Requests Section -->
+        <div id="dashboardRequests" class="dashboard-section">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-envelope"></i> My Contact Requests
+          </h3>
+          <div id="myRequestsList">
+            <!-- Requests will load here -->
+          </div>
+        </div>
+        
+        <!-- Activity Section -->
+        <div id="dashboardActivity" class="dashboard-section">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-chart-line"></i> My Activity
+          </h3>
+          <div id="myActivityList">
+            <div class="dealer-grid">
+              <div class="dealer-stat-card">
+                <h4>Cars Viewed</h4>
+                <div class="stat" id="carsViewed">0</div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">This month</p>
+              </div>
+              
+              <div class="dealer-stat-card">
+                <h4>Contacts Made</h4>
+                <div class="stat" id="contactsMade">0</div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Owner requests</p>
+              </div>
+              
+              <div class="dealer-stat-card">
+                <h4>Cars Listed</h4>
+                <div class="stat" id="carsListed">0</div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Active listings</p>
+              </div>
+              
+              <div class="dealer-stat-card">
+                <h4>Money Saved</h4>
+                <div class="stat">₹<span id="moneySaved">0</span></div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">With dealer price</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Dealer Stats Section -->
+        <div id="dashboardStats" class="dashboard-section">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-chart-bar"></i> Dealer Statistics
+          </h3>
+          <div id="dealerStatsContent">
+            <!-- Stats will load here -->
+          </div>
+        </div>
+        
+        <!-- Account Settings Section -->
+        <div id="dashboardAccount" class="dashboard-section">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-cog"></i> Account Settings
+          </h3>
+          
+          <div class="card" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #10b981;">
+            <h4 style="color: #065f46; margin-bottom: 1rem;">
+              <i class="fas fa-bolt"></i> Dealer Account Status
+            </h4>
+            <div id="accountStatusInfo">
+              <!-- Account status will load here -->
+            </div>
+          </div>
+          
+          <div class="card" style="margin-top: 2rem;">
+            <h4 style="color: #1e293b; margin-bottom: 1rem;">
+              <i class="fas fa-shield-alt"></i> Security Settings
+            </h4>
+            <div class="form-group">
+              <label><i class="fas fa-lock"></i> Change Password</label>
+              <input type="password" id="newPassword" class="form-control" placeholder="Enter new password">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-lock"></i> Confirm Password</label>
+              <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password">
+            </div>
+            <button class="btn btn-primary" onclick="changePassword()">
+              <i class="fas fa-key"></i> Change Password
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auctions Page -->
+  <div id="auctions" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-gavel"></i> Live Auctions
+      </div>
+      <p style="color: #64748b; margin-bottom: 1.5rem;">
+        Bid on exclusive cars. Available for activated dealer accounts only.
+      </p>
+      <div id="auctionsList" class="cars-grid">
+        <!-- Auctions will load here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Page -->
+  <div id="contact" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-phone"></i> Contact Us
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+        <div class="detail-item">
+          <h4><i class="fas fa-envelope"></i> Dealer Support</h4>
+          <p>dealers@carmarketplace.com</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-phone"></i> Priority Hotline</h4>
+          <p>+1 (555) 987-6543</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-map-marker-alt"></i> Dealer Center</h4>
+          <p>456 Dealer Avenue, Auto City</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-clock"></i> Support Hours</h4>
+          <p>24/7 Priority Support</p>
+          <p>Emergency: +1 (555) 999-8888</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Dealer Payment Modal -->
+<div id="dealerPaymentModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-bolt"></i> Activate Dealer Account
+      </div>
+      <button class="close-modal" onclick="hideModal('dealerPaymentModal')">&times;</button>
+    </div>
+    
+    <div class="card" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: none;">
+      <p style="color: #0369a1; margin-bottom: 1.5rem; font-size: 1.1rem;">
+        Unlock premium dealer features with a one-time payment:
+      </p>
+      <h2 style="text-align: center; color: #10b981; font-size: 3rem; margin: 1.5rem 0;">₹2,000</h2>
+      <p style="text-align: center; color: #64748b; font-size: 0.9rem;">
+        One-time payment • Lifetime access • No recurring fees
+      </p>
+      
+      <div class="dealer-grid" style="margin-top: 2rem;">
+        <div class="dealer-stat-card" style="background: white;">
+          <h4><i class="fas fa-eye"></i> Contact Details</h4>
+          <p>See owner contacts</p>
+        </div>
+        <div class="dealer-stat-card" style="background: white;">
+          <h4><i class="fas fa-plus"></i> Add Cars</h4>
+          <p>Visible to all users</p>
+        </div>
+        <div class="dealer-stat-card" style="background: white;">
+          <h4><i class="fas fa-gavel"></i> Auctions</h4>
+          <p>Participate in bids</p>
+        </div>
+        <div class="dealer-stat-card" style="background: white;">
+          <h4><i class="fas fa-percentage"></i> Discount</h4>
+          <p>Dealer prices</p>
+        </div>
+      </div>
+    </div>
+    
+    <button class="btn btn-success btn-block" onclick="payDealer()" style="margin-top: 2rem; padding: 16px;">
+      <i class="fas fa-credit-card"></i> Pay Now with Razorpay
+    </button>
+    
+    <p style="text-align: center; color: #64748b; margin-top: 1rem; font-size: 0.9rem;">
+      Secure payment processed by Razorpay
+    </p>
+    
+    <div id="payResult" class="message"></div>
+  </div>
+</div>
+
+<!-- Car Details Modal -->
+<div id="carDetailsModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="carDetailTitle"></div>
+      <button class="close-modal" onclick="hideModal('carDetailsModal')">&times;</button>
+    </div>
+    
+    <div id="carDetailsContent">
+      <!-- Car details will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- Contact Owner Modal -->
+<div id="contactOwnerModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-user"></i> Owner Contact Details
+      </div>
+      <button class="close-modal" onclick="hideModal('contactOwnerModal')">&times;</button>
+    </div>
+    
+    <div id="contactOwnerContent">
+      <!-- Contact details will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- Edit Car Modal -->
+<div id="editCarModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-edit"></i> Edit Car
+      </div>
+      <button class="close-modal" onclick="hideModal('editCarModal')">&times;</button>
+    </div>
+    
+    <div id="editCarContent">
+      <!-- Edit car form will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- Bid Modal -->
+<div id="bidModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-gavel"></i> Place Bid
+      </div>
+      <button class="close-modal" onclick="hideModal('bidModal')">&times;</button>
+    </div>
+    
+    <div id="bidContent">
+      <!-- Bid form will load here -->
+    </div>
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbymbaeEfQTyJedYozT4w_nUJCRrRr_4CbB_IgyVToXLJHHLXLOR-B0c-yv-aCM19xEQ/exec";
+const RAZORPAY_KEY = "rzp_test_S9LcRT3Tvt3nkQ";
+const DEALER_FEE = 2000;
+
+let currentUser = null;
+let allCars = [];
+let currentViewingCarId = null;
+let editingCarId = null;
+let currentCarType = 'all';
+let allAuctions = [];
+
+/* ==================== INITIALIZATION ==================== */
+document.addEventListener('DOMContentLoaded', function() {
+  checkAuthStatus();
+  loadRecentCars();
+  loadCars();
+  loadDealerStats();
+});
+
+/* ==================== AUTHENTICATION ==================== */
+function checkAuthStatus() {
+  const savedUser = localStorage.getItem('carMarketUser');
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    updateUIForUser();
+    loadDashboardData();
+  } else {
+    // Auto-login for demo
+    autoLogin();
+  }
+}
+
+function autoLogin() {
+  currentUser = {
+    email: 'dealer@example.com',
+    role: 'dealer',
+    name: 'Demo Dealer',
+    phone: '9876543210',
+    address: '123 Dealer Street, City',
+    dealership: 'Premium Auto Dealers',
+    dealerActive: 'NO',
+    dealerPaid: 'NO'
+  };
+  
+  localStorage.setItem('carMarketUser', JSON.stringify(currentUser));
+  updateUIForUser();
+  loadDashboardData();
+}
+
+function logout() {
+  localStorage.removeItem('carMarketUser');
+  window.location.href = 'main.html';
+}
+
+function updateUIForUser() {
+  if (currentUser) {
+    document.getElementById('userEmail').textContent = currentUser.email;
+    document.getElementById('dashboardUserEmail').textContent = currentUser.email;
+    document.getElementById('dashboardUserName').textContent = currentUser.name;
+    document.getElementById('dashboardUserPhone').textContent = currentUser.phone;
+    document.getElementById('dashboardDealershipName').textContent = currentUser.dealership || 'Not set';
+    
+    // Update dealer status
+    const dealerStatus = document.getElementById('dealerStatus');
+    const activateBtn = document.getElementById('activateDealerBtn');
+    const auctionsNavBtn = document.getElementById('auctionsNavBtn');
+    const dealerStatusMessage = document.getElementById('dealerStatusMessage');
+    const dashboardDealerStatus = document.getElementById('dashboardDealerStatus');
+    
+    if (currentUser.dealerActive === 'YES') {
+      dealerStatus.textContent = 'Active';
+      dealerStatus.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+      activateBtn.style.display = 'none';
+      auctionsNavBtn.classList.remove('hidden');
+      
+      if (dealerStatusMessage) {
+        dealerStatusMessage.innerHTML = '<i class="fas fa-check-circle"></i> Your dealer account is active. All premium features are unlocked.';
+        dealerStatusMessage.className = 'message success';
+      }
+      
+      if (dashboardDealerStatus) {
+        dashboardDealerStatus.innerHTML = '<span style="color:#10b981;font-weight:600;">✅ ACTIVE</span>';
+      }
+    } else {
+      dealerStatus.textContent = 'Inactive';
+      dealerStatus.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+      activateBtn.style.display = 'inline-flex';
+      auctionsNavBtn.classList.add('hidden');
+      
+      if (dealerStatusMessage) {
+        dealerStatusMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Your dealer account is not activated. Activate now to unlock premium features.';
+        dealerStatusMessage.className = 'message warning';
+      }
+      
+      if (dashboardDealerStatus) {
+        dashboardDealerStatus.innerHTML = '<span style="color:#f59e0b;font-weight:600;">❌ INACTIVE</span>';
+      }
+    }
+    
+    // Set form values
+    document.getElementById('dashboardName').value = currentUser.name;
+    document.getElementById('dashboardPhone').value = currentUser.phone;
+    document.getElementById('dashboardAddress').value = currentUser.address;
+    document.getElementById('dashboardDealership').value = currentUser.dealership || '';
+    
+    // Update account status info
+    updateAccountStatusInfo();
+  }
+}
+
+/* ==================== DEALER ACTIVATION ==================== */
+function activateDealerAccount() {
+  showModal('dealerPaymentModal');
+}
+
+function payDealer() {
+  if (!currentUser || currentUser.role !== 'dealer') {
+    alert('Only dealers can make this payment');
+    return;
+  }
+  
+  const options = {
+    key: RAZORPAY_KEY,
+    amount: DEALER_FEE * 100,
+    currency: 'INR',
+    name: 'Car Marketplace',
+    description: 'Dealer Account Activation',
+    prefill: {
+      email: currentUser.email,
+      name: currentUser.name || currentUser.email.split('@')[0],
+      contact: currentUser.phone || '9999999999'
+    },
+    handler: function(response) {
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'dealerPayment',
+          email: currentUser.email,
+          amount: DEALER_FEE,
+          paymentId: response.razorpay_payment_id
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'dealer_activated') {
+          currentUser.dealerActive = 'YES';
+          currentUser.dealerPaid = 'YES';
+          localStorage.setItem('carMarketUser', JSON.stringify(currentUser));
+          
+          document.getElementById('payResult').innerHTML = `
+            <div class="message success">
+              <i class="fas fa-check-circle"></i> Payment successful! Your dealer account is now active.
+            </div>
+          `;
+          
+          setTimeout(() => {
+            hideModal('dealerPaymentModal');
+            updateUIForUser();
+            loadCars();
+            loadRecentCars();
+            alert('✅ Dealer account activated successfully!');
+          }, 2000);
+        } else {
+          document.getElementById('payResult').innerHTML = `
+            <div class="message error">
+              <i class="fas fa-exclamation-circle"></i> Payment failed. Please try again.
+            </div>
+          `;
+        }
+      })
+      .catch(err => {
+        document.getElementById('payResult').innerHTML = `
+          <div class="message error">
+            <i class="fas fa-exclamation-circle"></i> Error: ${err.message}
+          </div>
+        `;
+      });
+    },
+    theme: {
+      color: '#10b981'
+    }
+  };
+  
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+function updateAccountStatusInfo() {
+  const accountStatusInfo = document.getElementById('accountStatusInfo');
+  if (!accountStatusInfo) return;
+  
+  if (currentUser.dealerActive === 'YES') {
+    accountStatusInfo.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 1rem;">
+        <div style="background: #10b981; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-check"></i>
+        </div>
+        <div>
+          <p style="font-weight: 600; color: #065f46;">Account Active</p>
+          <p style="color: #64748b; font-size: 0.9rem;">All premium features unlocked</p>
+        </div>
+      </div>
+      <div class="details-grid">
+        <div class="detail-item" style="background: white;">
+          <h4>Activation Date</h4>
+          <p>${new Date().toLocaleDateString()}</p>
+        </div>
+        <div class="detail-item" style="background: white;">
+          <h4>Plan</h4>
+          <p>Lifetime</p>
+        </div>
+        <div class="detail-item" style="background: white;">
+          <h4>Payment</h4>
+          <p>₹2,000 (One-time)</p>
+        </div>
+        <div class="detail-item" style="background: white;">
+          <h4>Renewal</h4>
+          <p>Not Required</p>
+        </div>
+      </div>
+    `;
+  } else {
+    accountStatusInfo.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 1rem;">
+        <div style="background: #f59e0b; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-exclamation"></i>
+        </div>
+        <div>
+          <p style="font-weight: 600; color: #92400e;">Account Inactive</p>
+          <p style="color: #64748b; font-size: 0.9rem;">Premium features locked</p>
+        </div>
+      </div>
+      <div class="message warning" style="margin: 1rem 0;">
+        <i class="fas fa-lock"></i> You need to activate your dealer account to access:
+        <ul style="margin-top: 10px; padding-left: 20px;">
+          <li>Dealer prices on all cars</li>
+          <li>Owner contact details access</li>
+          <li>Live auctions participation</li>
+          <li>Priority customer support</li>
+        </ul>
+      </div>
+      <button class="btn btn-success" onclick="activateDealerAccount()" style="margin-top: 1rem;">
+        <i class="fas fa-bolt"></i> Activate Now (₹2,000)
+      </button>
+    `;
+  }
+}
+
+/* ==================== NAVIGATION ==================== */
+function showPage(pageId) {
+  // Update nav buttons
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  const navBtn = document.querySelector(`.nav-btn[onclick*="${pageId}"]`);
+  if (navBtn) navBtn.classList.add('active');
+  
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(page => {
+    page.classList.remove('active');
+  });
+  
+  // Show selected page
+  document.getElementById(pageId).classList.add('active');
+  
+  // Load data for specific pages
+  switch(pageId) {
+    case 'home':
+      loadRecentCars();
+      break;
+    case 'cars':
+      loadCars();
+      break;
+    case 'dashboard':
+      showDashboardSection('profile');
+      loadDashboardData();
+      break;
+    case 'auctions':
+      if (currentUser.dealerActive === 'YES') {
+        loadAuctions();
+      } else {
+        alert('Please activate your dealer account to access auctions');
+        showModal('dealerPaymentModal');
+        showPage('home');
+      }
+      break;
+  }
+}
+
+function showDashboardSection(sectionId) {
+  // Update sidebar buttons
+  document.querySelectorAll('.sidebar-menu button').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  const activeButton = document.querySelector(`.sidebar-menu button[onclick*="${sectionId}"]`);
+  if (activeButton) activeButton.classList.add('active');
+  
+  // Hide all sections
+  document.querySelectorAll('.dashboard-section').forEach(section => {
+    section.classList.remove('active');
+  });
+  
+  // Show selected section
+  const sectionElement = document.getElementById(`dashboard${sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}`);
+  if (sectionElement) {
+    sectionElement.classList.add('active');
+  }
+  
+  // Load section data
+  switch(sectionId) {
+    case 'myCars':
+      loadMyCars();
+      break;
+    case 'requests':
+      loadMyRequests();
+      break;
+    case 'stats':
+      loadDealerStats();
+      break;
+    case 'account':
+      updateAccountStatusInfo();
+      break;
+  }
+}
+
+/* ==================== MODAL FUNCTIONS ==================== */
+function showModal(modalId) {
+  document.getElementById(modalId).classList.remove('hidden');
+}
+
+function hideModal(modalId) {
+  document.getElementById(modalId).classList.add('hidden');
+}
+
+function showMessage(elementId, message, type) {
+  const element = document.getElementById(elementId);
+  element.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+  element.className = `message ${type}`;
+  if (message) {
+    setTimeout(() => {
+      element.innerHTML = '';
+      element.className = 'message';
+    }, 5000);
+  }
+}
+
+/* ==================== CAR MANAGEMENT ==================== */
+function loadRecentCars() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getCars' })
+  })
+  .then(response => response.json())
+  .then(cars => {
+    const recentContainer = document.getElementById('recentCars');
+    recentContainer.innerHTML = '';
+    
+    // Sort by creation date (newest first)
+    const sortedCars = cars.sort((a, b) => new Date(b[10] || 0) - new Date(a[10] || 0));
+    
+    // Take only recent cars (last 6)
+    const recentCars = sortedCars.slice(0, 6);
+    
+    if (recentCars.length === 0) {
+      recentContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🚗</div>
+          <h3>No Cars Available</h3>
+          <p>No cars have been added yet.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    recentCars.forEach(car => {
+      const carCard = createCarCard(car);
+      recentContainer.appendChild(carCard);
+    });
+  })
+  .catch(err => console.error('Error loading recent cars:', err));
+}
+
+function loadCars() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getCars' })
+  })
+  .then(response => response.json())
+  .then(cars => {
+    allCars = cars;
+    displayCars(cars);
+  })
+  .catch(err => console.error('Error loading cars:', err));
+}
+
+function displayCars(cars) {
+  const container = document.getElementById('carsContainer');
+  container.innerHTML = '';
+  
+  if (cars.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🚗</div>
+        <h3>No Cars Found</h3>
+        <p>No cars match your search criteria.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Filter cars based on car type
+  let filteredCars = cars;
+  if (currentCarType !== 'all') {
+    filteredCars = cars.filter(car => {
+      const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+      if (currentCarType === 'dealer') return ownerRole === 'dealer';
+      if (currentCarType === 'user') return ownerRole === 'user';
+      if (currentCarType === 'admin') return ownerRole === 'admin';
+      return true;
+    });
+  }
+  
+  // Only show active cars to dealers (except their own cars)
+  filteredCars = filteredCars.filter(car => {
+    const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+    
+    // Always show dealer's own cars
+    if (currentUser && ownerEmail === currentUser.email) return true;
+    
+    // Show active cars from others
+    return status === 'ACTIVE';
+  });
+  
+  if (filteredCars.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🚗</div>
+        <h3>No Cars Available</h3>
+        <p>No cars available for the selected category.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  filteredCars.forEach(car => {
+    const carCard = createCarCard(car);
+    container.appendChild(carCard);
+  });
+}
+
+function createCarCard(car) {
+  const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+  
+  const images = imagesJson ? JSON.parse(imagesJson) : [];
+  const mainImage = images.length > 0 ? images[0] : 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop';
+  
+  const isDealer = currentUser && currentUser.dealerActive === 'YES';
+  const displayPrice = isDealer ? (dealerPrice || price) : price;
+  const isOwnCar = currentUser && ownerEmail === currentUser.email;
+  const isAuction = false; // You can add auction logic here
+  
+  const card = document.createElement('div');
+  card.className = 'car-card';
+  
+  let statusBadge = '';
+  if (isOwnCar) {
+    statusBadge = `<span class="car-status ${status === 'ACTIVE' ? 'status-active' : status === 'SOLD' ? 'status-sold' : 'status-inactive'}">${status}</span>`;
+  } else if (isAuction) {
+    statusBadge = `<span class="car-status status-auction">AUCTION</span>`;
+  }
+  
+  card.innerHTML = `
+    ${statusBadge}
+    <div class="car-image-container">
+      <img src="${mainImage}" alt="${title}" class="car-image" 
+           onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop'">
+    </div>
+    <div class="car-content">
+      <h3 class="car-title">${title}</h3>
+      <p class="car-price ${isDealer ? 'dealer-price' : ''}">
+        <i class="fas fa-tag"></i> ₹${displayPrice.toLocaleString()}
+        ${isDealer && dealerPrice && dealerPrice !== price ? 
+          `<span style="font-size:0.85rem;color:#64748b;text-decoration:line-through;margin-left:5px;">
+            ₹${price.toLocaleString()}
+          </span>
+          <span style="font-size:0.85rem;color:#10b981;margin-left:5px;">
+            (Dealer price)
+          </span>` : ''
+        }
+      </p>
+      <div class="car-meta">
+        <span><i class="fas fa-folder"></i> ${category || 'No category'}</span>
+        <span><i class="fas fa-user-tag"></i> ${ownerRole}</span>
+      </div>
+      <div class="car-actions">
+        <button class="btn btn-primary btn-small" onclick="viewCarDetails('${id}')">
+          <i class="fas fa-eye"></i> View
+        </button>
+        ${currentUser && currentUser.dealerActive === 'YES' && !isOwnCar && status === 'ACTIVE' ? 
+          `<button class="btn btn-secondary btn-small" onclick="requestOwnerContact('${id}')">
+            <i class="fas fa-envelope"></i> Contact Owner
+          </button>` : ''
+        }
+        ${isOwnCar ? 
+          `<button class="btn btn-warning btn-small" onclick="editMyCar('${id}')">
+            <i class="fas fa-edit"></i> Edit
+          </button>` : 
+          ''
+        }
+      </div>
+    </div>
+  `;
+  
+  return card;
+}
+
+function showCarType(type) {
+  currentCarType = type;
+  document.querySelectorAll('#cars .tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  displayCars(allCars);
+}
+
+function filterCars() {
+  const searchTerm = document.getElementById('searchCar').value.toLowerCase();
+  const category = document.getElementById('filterCategory').value;
+  const priceRange = document.getElementById('filterPrice').value;
+  
+  const filteredCars = allCars.filter(car => {
+    const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, carCategory, status, createdAt] = car;
+    
+    // Search filter
+    const matchesSearch = title.toLowerCase().includes(searchTerm) || 
+                         description.toLowerCase().includes(searchTerm);
+    if (!matchesSearch) return false;
+    
+    // Category filter
+    if (category && carCategory !== category) return false;
+    
+    // Price filter (use dealer price if dealer is active)
+    const displayPrice = currentUser && currentUser.dealerActive === 'YES' ? (dealerPrice || price) : price;
+    if (priceRange) {
+      const [min, max] = priceRange.split('-').map(Number);
+      if (displayPrice < min || displayPrice > max) return false;
+    }
+    
+    // Car type filter
+    if (currentCarType !== 'all') {
+      if (currentCarType === 'dealer' && ownerRole !== 'dealer') return false;
+      if (currentCarType === 'user' && ownerRole !== 'user') return false;
+      if (currentCarType === 'admin' && ownerRole !== 'admin') return false;
+    }
+    
+    // Always show dealer's own cars
+    if (currentUser && ownerEmail === currentUser.email) return true;
+    
+    // Show active cars from others
+    return status === 'ACTIVE';
+    
+    return false;
+  });
+  
+  const container = document.getElementById('carsContainer');
+  container.innerHTML = '';
+  
+  if (filteredCars.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🚗</div>
+        <h3>No Cars Found</h3>
+        <p>No cars match your search criteria.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  filteredCars.forEach(car => {
+    const carCard = createCarCard(car);
+    container.appendChild(carCard);
+  });
+}
+
+function viewCarDetails(carId) {
+  currentViewingCarId = carId;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getCarDetails',
+      carId: carId,
+      email: currentUser.email,
+      role: currentUser.role
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.car) {
+      const car = data.car;
+      const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+      
+      const images = imagesJson ? JSON.parse(imagesJson) : [];
+      const defaultImages = ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&h=400&fit=crop'];
+      
+      document.getElementById('carDetailTitle').innerHTML = `<i class="fas fa-car"></i> ${title}`;
+      
+      const detailsContent = document.getElementById('carDetailsContent');
+      const displayImages = images.length > 0 ? images : defaultImages;
+      
+      const isDealer = currentUser && currentUser.dealerActive === 'YES';
+      const displayPrice = isDealer ? (dealerPrice || price) : price;
+      const isOwnCar = currentUser && ownerEmail === currentUser.email;
+      
+      let detailsHtml = `
+        <div class="car-details-images">
+          ${displayImages.map(img => `
+            <img src="${img}" onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&h=400&fit=crop'">
+          `).join('')}
+        </div>
+        
+        <div class="details-grid">
+          <div class="detail-item">
+            <h4><i class="fas fa-tag"></i> Price</h4>
+            <p>
+              ₹${displayPrice.toLocaleString()} 
+              ${isDealer && dealerPrice && dealerPrice !== price ? 
+                `<span style="color:#64748b;font-size:0.9rem;text-decoration:line-through;margin-left:10px;">
+                  ₹${price.toLocaleString()}
+                </span>
+                <span style="color:#10b981;font-size:0.9rem;margin-left:5px;">
+                  (Dealer price)
+                </span>` : 
+                ''
+              }
+            </p>
+          </div>
+          <div class="detail-item">
+            <h4><i class="fas fa-folder"></i> Category</h4>
+            <p>${category || 'Not specified'}</p>
+          </div>
+          <div class="detail-item">
+            <h4><i class="fas fa-user-tag"></i> Owner Type</h4>
+            <p>${ownerRole}</p>
+          </div>
+          <div class="detail-item">
+            <h4><i class="fas fa-info-circle"></i> Status</h4>
+            <p>${status}</p>
+          </div>
+        </div>
+        
+        <div class="card" style="margin: 2rem 0;">
+          <h4 style="color: #1e293b; margin-bottom: 1rem;">
+            <i class="fas fa-align-left"></i> Description
+          </h4>
+          <p style="color: #475569; line-height: 1.6;">${description}</p>
+        </div>
+        
+        <p style="color: #64748b; margin: 1rem 0;">
+          <i class="fas fa-calendar"></i> Posted on: ${new Date(createdAt).toLocaleDateString()}
+        </p>
+      `;
+      
+      // Add extra details if available
+      if (data.details) {
+        detailsHtml += `
+          <div class="card" style="margin: 2rem 0;">
+            <h4 style="color: #1e293b; margin-bottom: 1.5rem;">
+              <i class="fas fa-cogs"></i> Car Specifications
+            </h4>
+            <div class="details-grid">
+              ${data.details[2] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-engine"></i> Engine</h4>
+                  <p>${data.details[2]}</p>
+                </div>
+              ` : ''}
+              ${data.details[3] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-tachometer-alt"></i> Mileage</h4>
+                  <p>${data.details[3]}</p>
+                </div>
+              ` : ''}
+              ${data.details[4] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-gas-pump"></i> Fuel Type</h4>
+                  <p>${data.details[4]}</p>
+                </div>
+              ` : ''}
+              ${data.details[5] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-cogs"></i> Transmission</h4>
+                  <p>${data.details[5]}</p>
+                </div>
+              ` : ''}
+              ${data.details[6] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-calendar"></i> Year</h4>
+                  <p>${data.details[6]}</p>
+                </div>
+              ` : ''}
+              ${data.details[7] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-palette"></i> Color</h4>
+                  <p>${data.details[7]}</p>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+      
+      // Add action buttons
+      detailsHtml += `
+        <div style="display: flex; gap: 12px; margin-top: 2rem; flex-wrap: wrap;">
+          ${currentUser.dealerActive === 'YES' && !isOwnCar && status === 'ACTIVE' ? 
+            `<button class="btn btn-primary" onclick="requestOwnerContact('${carId}')">
+              <i class="fas fa-envelope"></i> Contact Owner
+            </button>` : ''
+          }
+          
+          ${isOwnCar ? `
+            <button class="btn btn-warning" onclick="editMyCar('${carId}')">
+              <i class="fas fa-edit"></i> Edit Car
+            </button>
+            <button class="btn btn-danger" onclick="deleteMyCar('${carId}')">
+              <i class="fas fa-trash"></i> Delete Car
+            </button>
+          ` : ''}
+        </div>
+      `;
+      
+      detailsContent.innerHTML = detailsHtml;
+      showModal('carDetailsModal');
+    }
+  })
+  .catch(err => {
+    alert('❌ Error loading car details: ' + err.message);
+  });
+}
+
+function requestOwnerContact(carId) {
+  if (!currentUser || currentUser.dealerActive !== 'YES') {
+    alert('Please activate your dealer account first');
+    showModal('dealerPaymentModal');
+    return;
+  }
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getOwnerDetails',
+      ownerEmail: getCarOwnerEmail(carId)
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'ok' && data.owner) {
+      // Show contact details in modal
+      document.getElementById('contactOwnerContent').innerHTML = `
+        <div class="details-grid">
+          <div class="detail-item">
+            <h4><i class="fas fa-user"></i> Owner Name</h4>
+            <p>${data.owner.name || 'Not available'}</p>
+          </div>
+          <div class="detail-item">
+            <h4><i class="fas fa-envelope"></i> Email</h4>
+            <p>${data.owner.email}</p>
+          </div>
+          <div class="detail-item">
+            <h4><i class="fas fa-phone"></i> Phone</h4>
+            <p>${data.owner.phone || 'Not available'}</p>
+          </div>
+          <div class="detail-item">
+            <h4><i class="fas fa-map-marker-alt"></i> Address</h4>
+            <p>${data.owner.address || 'Not available'}</p>
+          </div>
+        </div>
+        
+        <div class="message info" style="margin-top: 1.5rem;">
+          <i class="fas fa-info-circle"></i> This contact request has been logged in the system.
+        </div>
+        
+        <div style="margin-top: 2rem; padding: 1.5rem; background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0;">
+          <h4 style="color: #065f46; margin-bottom: 1rem;">
+            <i class="fas fa-lightbulb"></i> Dealer Tips
+          </h4>
+          <ul style="color: #475569; line-height: 1.6;">
+            <li>Introduce yourself as a dealer from Car Marketplace</li>
+            <li>Mention you saw their car listing</li>
+            <li>Be professional and courteous in your communication</li>
+            <li>Follow up within 24-48 hours if no response</li>
+          </ul>
+        </div>
+        
+        <button class="btn btn-primary" onclick="hideModal('contactOwnerModal')" style="margin-top: 1.5rem;">
+          <i class="fas fa-check"></i> Close
+        </button>
+      `;
+      
+      showModal('contactOwnerModal');
+      
+      // Log the request to admin
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'requestOwnerContact',
+          carId: carId,
+          email: currentUser.email,
+          role: currentUser.role
+        })
+      });
+    } else {
+      alert('❌ Could not retrieve contact details');
+    }
+  })
+  .catch(err => {
+    alert('❌ Error: ' + err.message);
+  });
+}
+
+function getCarOwnerEmail(carId) {
+  const car = allCars.find(c => c[0] == carId);
+  return car ? car[2] : '';
+}
+
+function showAddCarModal() {
+  if (!currentUser) {
+    alert('Please login first');
+    return;
+  }
+  
+  // If user is on dashboard, show dashboard add car section
+  if (document.getElementById('dashboard').classList.contains('active')) {
+    showDashboardSection('addCar');
+  } else {
+    // Show the actual modal
+    window.location.href = "#dashboard";
+    showPage('dashboard');
+    showDashboardSection('addCar');
+  }
+}
+
+function addCarFromDashboard() {
+  if (!currentUser) return;
+  
+  const title = document.getElementById('dashboardCarTitle').value.trim();
+  const price = document.getElementById('dashboardCarPrice').value;
+  const dealerPrice = document.getElementById('dashboardCarDealerPrice').value;
+  const description = document.getElementById('dashboardCarDesc').value.trim();
+  const images = document.getElementById('dashboardCarImages').value.trim();
+  const category = document.getElementById('dashboardCarCategory').value;
+  
+  if (!title || !price || !description || !category) {
+    showMessage('dashboardAddCarMessage', 'Please fill all required fields', 'error');
+    return;
+  }
+  
+  const imageArray = images ? images.split(',').map(img => img.trim()).filter(img => img) : [];
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'addCar',
+      role: currentUser.role,
+      email: currentUser.email,
+      title: title,
+      price: parseFloat(price),
+      dealerPrice: dealerPrice ? parseFloat(dealerPrice) : parseFloat(price),
+      description: description,
+      images: imageArray,
+      category: category
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'car_added') {
+      showMessage('dashboardAddCarMessage', '✅ Car added successfully!', 'success');
+      
+      // Clear form
+      document.getElementById('dashboardCarTitle').value = '';
+      document.getElementById('dashboardCarPrice').value = '';
+      document.getElementById('dashboardCarDealerPrice').value = '';
+      document.getElementById('dashboardCarDesc').value = '';
+      document.getElementById('dashboardCarImages').value = '';
+      document.getElementById('dashboardCarCategory').value = '';
+      
+      // Reload data
+      loadMyCars();
+      loadCars();
+      loadRecentCars();
+      loadDealerStats();
+      
+      setTimeout(() => {
+        showMessage('dashboardAddCarMessage', '', 'success');
+      }, 2000);
+    }
+  })
+  .catch(err => {
+    showMessage('dashboardAddCarMessage', '❌ Error: ' + err.message, 'error');
+  });
+}
+
+/* ==================== DASHBOARD FUNCTIONS ==================== */
+function loadDashboardData() {
+  if (!currentUser) return;
+  
+  // Load profile
+  loadUserProfile();
+  
+  // Load dealer's cars
+  loadMyCars();
+  
+  // Set profile info
+  document.getElementById('dashboardUserName').textContent = currentUser.name || currentUser.email.split('@')[0];
+  document.getElementById('dashboardUserEmail').textContent = currentUser.email;
+  document.getElementById('dashboardUserRole').innerHTML = `<span class="user-badge ${currentUser.role}">${currentUser.role}</span>`;
+  document.getElementById('dashboardUserPhone').textContent = currentUser.phone || 'Not set';
+  document.getElementById('dashboardDealershipName').textContent = currentUser.dealership || 'Not set';
+}
+
+function loadUserProfile() {
+  // In a real app, you would fetch this from backend
+  // For now, we'll use localStorage
+  if (currentUser.name) {
+    document.getElementById('dashboardName').value = currentUser.name;
+    document.getElementById('dashboardPhone').value = currentUser.phone;
+    document.getElementById('dashboardAddress').value = currentUser.address;
+    document.getElementById('dashboardDealership').value = currentUser.dealership || '';
+  }
+}
+
+function updateDashboardProfile() {
+  const name = document.getElementById('dashboardName').value.trim();
+  const phone = document.getElementById('dashboardPhone').value.trim();
+  const address = document.getElementById('dashboardAddress').value.trim();
+  const dealership = document.getElementById('dashboardDealership').value.trim();
+  
+  if (!name || !phone || !address || !dealership) {
+    showMessage('profileMessage', 'Please fill all fields', 'error');
+    return;
+  }
+  
+  // Update current user object
+  currentUser.name = name;
+  currentUser.phone = phone;
+  currentUser.address = address;
+  currentUser.dealership = dealership;
+  
+  // Save to localStorage
+  localStorage.setItem('carMarketUser', JSON.stringify(currentUser));
+  
+  // Update display
+  document.getElementById('dashboardUserName').textContent = name;
+  document.getElementById('dashboardUserPhone').textContent = phone;
+  document.getElementById('dashboardDealershipName').textContent = dealership;
+  
+  // Also update backend
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'updateProfile',
+      email: currentUser.email,
+      name: name,
+      phone: phone,
+      address: address,
+      dealership: dealership
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'updated') {
+      showMessage('profileMessage', '✅ Profile updated successfully!', 'success');
+    } else {
+      showMessage('profileMessage', '❌ Failed to update profile', 'error');
+    }
+  })
+  .catch(err => {
+    showMessage('profileMessage', '❌ Error: ' + err.message, 'error');
+  });
+}
+
+function loadMyCars() {
+  if (!currentUser) return;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getCars' })
+  })
+  .then(response => response.json())
+  .then(cars => {
+    const myCars = cars.filter(car => car[2] === currentUser.email);
+    const container = document.getElementById('myCarsList');
+    
+    if (myCars.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🚗</div>
+          <h3>No Cars Listed</h3>
+          <p>You haven't listed any cars yet.</p>
+          <button class="btn btn-primary" onclick="showDashboardSection('addCar')">
+            <i class="fas fa-plus"></i> Add Your First Car
+          </button>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = '';
+    
+    myCars.forEach(car => {
+      const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+      
+      const images = imagesJson ? JSON.parse(imagesJson) : [];
+      const mainImage = images.length > 0 ? images[0] : 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop';
+      
+      const card = document.createElement('div');
+      card.className = 'car-card';
+      card.innerHTML = `
+        <span class="car-status ${status === 'ACTIVE' ? 'status-active' : status === 'SOLD' ? 'status-sold' : 'status-inactive'}">${status}</span>
+        <div class="car-image-container">
+          <img src="${mainImage}" alt="${title}" class="car-image" 
+               onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop'">
+        </div>
+        <div class="car-content">
+          <h3 class="car-title">${title}</h3>
+          <p class="car-price">
+            <i class="fas fa-tag"></i> 
+            <span>₹${price.toLocaleString()}</span>
+            ${dealerPrice && dealerPrice !== price ? 
+              `<span style="font-size:0.85rem;color:#10b981;margin-left:5px;">
+                (Dealer: ₹${dealerPrice.toLocaleString()})
+              </span>` : ''
+            }
+          </p>
+          <div class="car-meta">
+            <span><i class="fas fa-folder"></i> ${category || 'No category'}</span>
+            <span><i class="fas fa-calendar"></i> ${new Date(createdAt).toLocaleDateString()}</span>
+          </div>
+          <div class="car-actions">
+            <button class="btn btn-primary btn-small" onclick="viewCarDetails('${id}')">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="btn btn-warning btn-small" onclick="editMyCar('${id}')">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn btn-danger btn-small" onclick="deleteMyCar('${id}')">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      `;
+      
+      container.appendChild(card);
+    });
+  });
+}
+
+function editMyCar(carId) {
+  editingCarId = carId;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getCars' })
+  })
+  .then(response => response.json())
+  .then(cars => {
+    const car = cars.find(c => c[0] == carId);
+    if (car && car[2] === currentUser.email) {
+      const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+      const images = imagesJson ? JSON.parse(imagesJson) : [];
+      
+      const editContent = document.getElementById('editCarContent');
+      editContent.innerHTML = `
+        <input type="hidden" id="editCarId" value="${id}">
+        
+        <div class="form-group">
+          <label><i class="fas fa-heading"></i> Car Title</label>
+          <input type="text" id="editCarTitle" class="form-control" value="${title}" placeholder="Car title">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-tag"></i> User Price (₹)</label>
+          <input type="number" id="editCarPrice" class="form-control" value="${price}" placeholder="User price">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-tag"></i> Dealer Price (₹)</label>
+          <input type="number" id="editCarDealerPrice" class="form-control" value="${dealerPrice || ''}" placeholder="Dealer price (optional)">
+          <small style="color: #64748b;">If empty, same as user price</small>
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-align-left"></i> Description</label>
+          <textarea id="editCarDesc" class="form-control" rows="4" placeholder="Description">${description}</textarea>
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-image"></i> Image URLs (comma separated)</label>
+          <input type="text" id="editCarImages" class="form-control" 
+                 value="${images.join(', ')}" 
+                 placeholder="Image URLs">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-folder"></i> Category</label>
+          <select id="editCarCategory" class="form-control">
+            <option value="">Select Category</option>
+            <option value="SUV" ${category === 'SUV' ? 'selected' : ''}>🚙 SUV</option>
+            <option value="Sedan" ${category === 'Sedan' ? 'selected' : ''}>🚗 Sedan</option>
+            <option value="Hatchback" ${category === 'Hatchback' ? 'selected' : ''}>🚘 Hatchback</option>
+            <option value="Luxury" ${category === 'Luxury' ? 'selected' : ''}>🏎️ Luxury</option>
+            <option value="Sports" ${category === 'Sports' ? 'selected' : ''}>⚡ Sports</option>
+            <option value="Electric" ${category === 'Electric' ? 'selected' : ''}>🔋 Electric</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-info-circle"></i> Status</label>
+          <select id="editCarStatus" class="form-control">
+            <option value="ACTIVE" ${status === 'ACTIVE' ? 'selected' : ''}>Active</option>
+            <option value="INACTIVE" ${status === 'INACTIVE' ? 'selected' : ''}>Inactive</option>
+            <option value="SOLD" ${status === 'SOLD' ? 'selected' : ''}>Sold</option>
+          </select>
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button class="btn btn-primary" onclick="updateMyCar()">
+            <i class="fas fa-save"></i> Update Car
+          </button>
+          <button class="btn btn-secondary" onclick="hideModal('editCarModal')">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+      `;
+      
+      showModal('editCarModal');
+    }
+  });
+}
+
+function updateMyCar() {
+  const carId = document.getElementById('editCarId').value;
+  const title = document.getElementById('editCarTitle').value.trim();
+  const price = document.getElementById('editCarPrice').value;
+  const dealerPrice = document.getElementById('editCarDealerPrice').value;
+  const description = document.getElementById('editCarDesc').value.trim();
+  const images = document.getElementById('editCarImages').value.trim();
+  const category = document.getElementById('editCarCategory').value;
+  const status = document.getElementById('editCarStatus').value;
+  
+  if (!title || !price || !description || !category || !status) {
+    alert('❌ Please fill all fields');
+    return;
+  }
+  
+  const imageArray = images ? images.split(',').map(img => img.trim()).filter(img => img) : [];
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'updateCar',
+      carId: carId,
+      title: title,
+      price: parseFloat(price),
+      dealerPrice: dealerPrice ? parseFloat(dealerPrice) : parseFloat(price),
+      description: description,
+      images: imageArray,
+      category: category,
+      status: status
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'updated') {
+      alert('✅ Car updated successfully!');
+      hideModal('editCarModal');
+      hideModal('carDetailsModal');
+      loadMyCars();
+      loadCars();
+      loadRecentCars();
+      loadDealerStats();
+    }
+  })
+  .catch(err => {
+    alert('❌ Error: ' + err.message);
+  });
+}
+
+function deleteMyCar(carId) {
+  if (!confirm('Are you sure you want to delete this car? This action cannot be undone.')) return;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'deleteCar',
+      carId: carId
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'deleted') {
+      alert('✅ Car deleted successfully');
+      hideModal('carDetailsModal');
+      loadMyCars();
+      loadCars();
+      loadRecentCars();
+      loadDealerStats();
+    }
+  })
+  .catch(err => {
+    alert('❌ Error: ' + err.message);
+  });
+}
+
+function loadMyRequests() {
+  if (!currentUser) return;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getContactRequests',
+      email: currentUser.email
+    })
+  })
+  .then(response => response.json())
+  .then(requests => {
+    const container = document.getElementById('myRequestsList');
+    
+    if (requests.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📨</div>
+          <h3>No Contact Requests</h3>
+          <p>You haven't made any contact requests yet.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    let html = '<div class="card">';
+    requests.forEach(request => {
+      const [carId, requesterEmail, requesterRole, date] = request;
+      // Find car details
+      const car = allCars.find(c => c[0] == carId);
+      const carName = car ? car[3] : 'Unknown Car';
+      
+      html += `
+        <div style="border-bottom: 1px solid #e2e8f0; padding: 1.5rem 0;">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+            <div>
+              <p style="font-weight: 700; color: #1e293b; margin-bottom: 5px;">
+                <i class="fas fa-car"></i> ${carName} (ID: ${carId})
+              </p>
+              <p style="color: #475569;">
+                <i class="fas fa-user"></i> Requested by: ${requesterEmail}
+              </p>
+              <p style="color: #475569; font-size: 0.9rem; margin-top: 5px;">
+                <i class="fas fa-user-tag"></i> Role: ${requesterRole}
+              </p>
+            </div>
+            <span class="user-badge" style="background: #10b981; font-size: 0.8rem;">Requested</span>
+          </div>
+          <p style="color: #64748b; font-size: 0.9rem;">
+            <i class="fas fa-clock"></i> ${new Date(date).toLocaleString()}
+          </p>
+        </div>
+      `;
+    });
+    html += '</div>';
+    
+    container.innerHTML = html;
+  })
+  .catch(err => {
+    const container = document.getElementById('myRequestsList');
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📨</div>
+        <h3>Error Loading Requests</h3>
+        <p>${err.message}</p>
+      </div>
+    `;
+  });
+}
+
+function loadDealerStats() {
+  if (!currentUser) return;
+  
+  // Calculate dealer statistics
+  const myCars = allCars.filter(car => car[2] === currentUser.email);
+  const activeCars = myCars.filter(car => car[9] === 'ACTIVE');
+  
+  // Calculate money saved with dealer discount
+  let moneySaved = 0;
+  if (currentUser.dealerActive === 'YES') {
+    allCars.forEach(car => {
+      if (car[2] !== currentUser.email && car[9] === 'ACTIVE' && car[5] && car[5] < car[4]) {
+        moneySaved += car[4] - car[5]; // Difference between user price and dealer price
+      }
+    });
+  }
+  
+  // Update stats display
+  document.getElementById('carsListed').textContent = activeCars.length;
+  document.getElementById('moneySaved').textContent = Math.floor(moneySaved).toLocaleString();
+  
+  // Update dealer stats content
+  const statsContent = document.getElementById('dealerStatsContent');
+  if (statsContent) {
+    statsContent.innerHTML = `
+      <div class="dealer-grid">
+        <div class="dealer-stat-card">
+          <h4>Total Cars Listed</h4>
+          <div class="stat">${myCars.length}</div>
+          <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">All time</p>
+        </div>
+        
+        <div class="dealer-stat-card">
+          <h4>Active Listings</h4>
+          <div class="stat">${activeCars.length}</div>
+          <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Currently for sale</p>
+        </div>
+        
+        <div class="dealer-stat-card">
+          <h4>Cars Sold</h4>
+          <div class="stat">${myCars.filter(car => car[9] === 'SOLD').length}</div>
+          <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Completed sales</p>
+        </div>
+        
+        <div class="dealer-stat-card">
+          <h4>Total Value</h4>
+          <div class="stat">₹${myCars.reduce((sum, car) => sum + car[4], 0).toLocaleString()}</div>
+          <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Listed cars value</p>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function changePassword() {
+  const newPassword = document.getElementById('newPassword').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  
+  if (!newPassword || !confirmPassword) {
+    alert('Please enter both password fields');
+    return;
+  }
+  
+  if (newPassword !== confirmPassword) {
+    alert('Passwords do not match');
+    return;
+  }
+  
+  if (newPassword.length < 6) {
+    alert('Password must be at least 6 characters long');
+    return;
+  }
+  
+  // In a real app, you would send this to backend
+  // For demo, we'll just show success message
+  alert('✅ Password changed successfully!');
+  
+  // Clear fields
+  document.getElementById('newPassword').value = '';
+  document.getElementById('confirmPassword').value = '';
+}
+
+/* ==================== AUCTION FUNCTIONS ==================== */
+function loadAuctions() {
+  if (!currentUser || currentUser.dealerActive !== 'YES') {
+    const container = document.getElementById('auctionsList');
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🔒</div>
+        <h3>Auctions Locked</h3>
+        <p>Please activate your dealer account to access auctions.</p>
+        <button class="btn btn-success" onclick="activateDealerAccount()" style="margin-top: 1.5rem;">
+          <i class="fas fa-bolt"></i> Activate Now
+        </button>
+      </div>
+    `;
+    return;
+  }
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getAllAuctions' })
+  })
+  .then(response => response.json())
+  .then(auctions => {
+    allAuctions = auctions;
+    const container = document.getElementById('auctionsList');
+    
+    if (auctions.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🏷️</div>
+          <h3>No Active Auctions</h3>
+          <p>There are no live auctions at the moment.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    // Filter active auctions
+    const activeAuctions = auctions.filter(auction => auction[2] === 'ACTIVE');
+    
+    if (activeAuctions.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🏷️</div>
+          <h3>No Active Auctions</h3>
+          <p>All auctions have ended. Check back later for new auctions.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = '';
+    
+    activeAuctions.forEach(auction => {
+      const [auctionId, carId, status, startPrice, startedAt, endedAt] = auction;
+      
+      // Find car details
+      const car = allCars.find(c => c[0] == carId);
+      if (!car) return;
+      
+      const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, carStatus, createdAt] = car;
+      const images = imagesJson ? JSON.parse(imagesJson) : [];
+      const mainImage = images.length > 0 ? images[0] : 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop';
+      
+      // Calculate time remaining
+      const endTime = new Date(endedAt);
+      const now = new Date();
+      const timeRemaining = endTime - now;
+      
+      if (timeRemaining <= 0) return; // Skip expired auctions
+      
+      const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+      const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+      
+      const timeRemainingStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      // Get current highest bid
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'getBids',
+          auctionId: auctionId
+        })
+      })
+      .then(response => response.json())
+      .then(bids => {
+        let currentBid = startPrice;
+        let bidCount = 0;
+        
+        if (bids && bids.length > 0) {
+          bidCount = bids.length;
+          // Find highest bid
+          bids.forEach(bid => {
+            if (bid[2] > currentBid) {
+              currentBid = bid[2];
+            }
+          });
+        }
+        
+        const auctionCard = document.createElement('div');
+        auctionCard.className = 'auction-card';
+        auctionCard.innerHTML = `
+          <div class="car-image-container">
+            <img src="${mainImage}" alt="${title}" class="car-image" 
+                 onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop'">
+          </div>
+          <div style="margin-top: 1rem;">
+            <h3 style="color: #92400e; margin-bottom: 1rem;">
+              <i class="fas fa-gavel"></i> ${title}
+            </h3>
+            <div class="auction-timer">
+              <i class="fas fa-clock"></i>
+              <span>${timeRemainingStr}</span>
+              <span style="font-size: 1rem; color: #64748b;">remaining</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+              <div>
+                <p style="color: #64748b; font-size: 0.9rem;">Current Bid</p>
+                <p style="font-size: 1.8rem; font-weight: 800; color: #10b981;">₹${currentBid.toLocaleString()}</p>
+              </div>
+              <div>
+                <p style="color: #64748b; font-size: 0.9rem;">Starting Price</p>
+                <p style="font-size: 1.2rem; font-weight: 600; color: #1e293b;">₹${startPrice.toLocaleString()}</p>
+              </div>
+              <div>
+                <p style="color: #64748b; font-size: 0.9rem;">Bids</p>
+                <p style="font-size: 1.2rem; font-weight: 600; color: #1e293b;">${bidCount}</p>
+              </div>
+            </div>
+            <button class="btn btn-warning btn-block" onclick="placeBid('${auctionId}', ${currentBid}, ${startPrice})">
+              <i class="fas fa-gavel"></i> Place Bid
+            </button>
+          </div>
+        `;
+        
+        container.appendChild(auctionCard);
+      });
+    });
+  })
+  .catch(err => {
+    console.error('Error loading auctions:', err);
+    const container = document.getElementById('auctionsList');
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">⚠️</div>
+        <h3>Error Loading Auctions</h3>
+        <p>${err.message}</p>
+      </div>
+    `;
+  });
+}
+
+function placeBid(auctionId, currentBid, startPrice) {
+  document.getElementById('bidContent').innerHTML = `
+    <input type="hidden" id="bidAuctionId" value="${auctionId}">
+    <input type="hidden" id="currentBid" value="${currentBid}">
+    <input type="hidden" id="startPrice" value="${startPrice}">
+    
+    <div class="form-group">
+      <label><i class="fas fa-tag"></i> Your Bid Amount (₹)</label>
+      <input type="number" id="bidAmount" class="form-control" 
+             placeholder="Enter your bid amount" 
+             min="${currentBid + 1000}" 
+             value="${currentBid + 1000}">
+      <small style="color: #64748b;">Minimum bid: ₹${(currentBid + 1000).toLocaleString()}</small>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-info-circle"></i> Bid Terms</label>
+      <div style="padding: 1rem; background: #f8fafc; border-radius: 8px; font-size: 0.9rem; color: #64748b;">
+        <p><i class="fas fa-check-circle" style="color:#10b981;"></i> Minimum bid increment: ₹1,000</p>
+        <p><i class="fas fa-check-circle" style="color:#10b981;"></i> Bid is binding if you win</p>
+        <p><i class="fas fa-check-circle" style="color:#10b981;"></i> 10% deposit required if you win</p>
+        <p><i class="fas fa-check-circle" style="color:#10b981;"></i> You must complete the purchase if you win</p>
+      </div>
+    </div>
+    
+    <button class="btn btn-warning btn-block" onclick="submitBid()">
+      <i class="fas fa-paper-plane"></i> Submit Bid
+    </button>
+  `;
+  
+  showModal('bidModal');
+}
+
+function submitBid() {
+  const auctionId = document.getElementById('bidAuctionId').value;
+  const bidAmount = document.getElementById('bidAmount').value;
+  const currentBid = parseFloat(document.getElementById('currentBid').value);
+  const startPrice = parseFloat(document.getElementById('startPrice').value);
+  
+  if (!bidAmount || bidAmount <= 0) {
+    alert('Please enter a valid bid amount');
+    return;
+  }
+  
+  if (parseFloat(bidAmount) <= currentBid) {
+    alert(`Bid must be higher than current bid of ₹${currentBid.toLocaleString()}`);
+    return;
+  }
+  
+  if (parseFloat(bidAmount) < (startPrice + 1000) && currentBid === startPrice) {
+    alert(`Bid must be at least ₹${(startPrice + 1000).toLocaleString()}`);
+    return;
+  }
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'placeBid',
+      auctionId: auctionId,
+      email: currentUser.email,
+      bidAmount: parseFloat(bidAmount)
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'bid_placed') {
+      alert(`✅ Bid of ₹${parseFloat(bidAmount).toLocaleString()} submitted successfully!`);
+      hideModal('bidModal');
+      loadAuctions();
+    } else {
+      alert(`❌ ${data.message || 'Failed to place bid'}`);
+    }
+  })
+  .catch(err => {
+    alert(`❌ Error: ${err.message}`);
+  });
+}
+
+/* ==================== UTILITY FUNCTIONS ==================== */
+function showDealerInfo(type) {
+  const tabs = document.querySelectorAll('#home .tab');
+  tabs.forEach(tab => tab.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  const content = document.getElementById('dealerInfoContent');
+  
+  switch(type) {
+    case 'features':
+      content.innerHTML = `
+        <div class="dealer-grid">
+          <div class="dealer-stat-card">
+            <h4><i class="fas fa-percentage"></i> Dealer Pricing</h4>
+            <div class="stat">Special Prices</div>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Exclusive dealer rates</p>
+          </div>
+          
+          <div class="dealer-stat-card">
+            <h4><i class="fas fa-eye"></i> Contact Access</h4>
+            <div class="stat">View All</div>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Owner details</p>
+          </div>
+          
+          <div class="dealer-stat-card">
+            <h4><i class="fas fa-gavel"></i> Auctions</h4>
+            <div class="stat">Live Bids</div>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Participate & win</p>
+          </div>
+          
+          <div class="dealer-stat-card">
+            <h4><i class="fas fa-crown"></i> Priority</h4>
+            <div class="stat">VIP Support</div>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">24/7 assistance</p>
+          </div>
+        </div>
+      `;
+      break;
+      
+    case 'benefits':
+      content.innerHTML = `
+        <div style="padding: 2rem; background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-radius: 12px; border: 2px solid #bbf7d0;">
+          <h4 style="color: #065f46; margin-bottom: 1.5rem;">
+            <i class="fas fa-gift"></i> Dealer Benefits
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+            <div style="background: white; padding: 1.5rem; border-radius: 10px;">
+              <h5 style="color: #1e293b; margin-bottom: 10px;">
+                <i class="fas fa-money-bill-wave" style="color:#10b981;"></i> Cost Savings
+              </h5>
+              <p style="color: #64748b; font-size: 0.9rem;">Access dealer-only prices on all cars, increasing your profit margins significantly.</p>
+            </div>
+            
+            <div style="background: white; padding: 1.5rem; border-radius: 10px;">
+              <h5 style="color: #1e293b; margin-bottom: 10px;">
+                <i class="fas fa-bolt" style="color:#10b981;"></i> Faster Deals
+              </h5>
+              <p style="color: #64748b; font-size: 0.9rem;">Direct access to owner contacts means faster negotiations and quicker deals.</p>
+            </div>
+            
+            <div style="background: white; padding: 1.5rem; border-radius: 10px;">
+              <h5 style="color: #1e293b; margin-bottom: 10px;">
+                <i class="fas fa-chart-line" style="color:#10b981;"></i> Exclusive Access
+              </h5>
+              <p style="color: #64748b; font-size: 0.9rem;">Access premium auctions with exclusive cars not available to regular users.</p>
+            </div>
+            
+            <div style="background: white; padding: 1.5rem; border-radius: 10px;">
+              <h5 style="color: #1e293b; margin-bottom: 10px;">
+                <i class="fas fa-shield-alt" style="color:#10b981;"></i> Trust & Credibility
+              </h5>
+              <p style="color: #64748b; font-size: 0.9rem;">Verified dealer badge builds trust with sellers and buyers alike.</p>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+      
+    case 'pricing':
+      content.innerHTML = `
+        <div style="text-align: center; padding: 2rem;">
+          <h2 style="color: #10b981; font-size: 3rem; margin-bottom: 1rem;">₹2,000</h2>
+          <p style="color: #64748b; margin-bottom: 2rem; font-size: 1.1rem;">
+            One-time payment • Lifetime access • No recurring fees
+          </p>
+          
+          <div style="max-width: 400px; margin: 0 auto; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+              <div style="background: #10b981; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-check"></i>
+              </div>
+              <span>Dealer prices on all cars</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+              <div style="background: #10b981; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-check"></i>
+              </div>
+              <span>Direct owner contact access</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+              <div style="background: #10b981; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-check"></i>
+              </div>
+              <span>Live auction participation</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+              <div style="background: #10b981; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-check"></i>
+              </div>
+              <span>Priority customer support</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+              <div style="background: #10b981; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-check"></i>
+              </div>
+              <span>Verified dealer badge</span>
+            </div>
+          </div>
+          
+          <button class="btn btn-success" onclick="activateDealerAccount()" style="margin-top: 2rem; padding: 12px 30px;">
+            <i class="fas fa-bolt"></i> Activate Now
+          </button>
+        </div>
+      `;
+      break;
+  }
+}
+</script>
+</body>
+</html>
