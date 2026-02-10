@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Marketplace</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            color: #2563eb;
+            background: #eff6ff;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #dbeafe;
+        }
+        
+        .logo-text {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-text span {
+            color: #2563eb;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 700px;
+            margin: 0 auto 25px;
+            line-height: 1.7;
+        }
+        
+        /* Auth Container */
+        .auth-container {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .auth-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        }
+        
+        .auth-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .auth-btn.secondary {
+            background: #f1f5f9;
+            color: #475569;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .auth-btn.secondary:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+        
+        /* Current User Display */
+        .current-user {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .current-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .user-email {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #334155;
+        }
+        
+        .user-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            display: inline-block;
+        }
+        
+        .user-badge.admin {
+            background: #dc2626;
+        }
+        
+        .user-badge.dealer {
+            background: #059669;
+        }
+        
+        .user-badge.user {
+            background: #2563eb;
+        }
+        
+        .logout-btn {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logout-btn:hover {
+            background: #fee2e2;
+            transform: translateY(-2px);
+        }
+        
+        /* Roles Container */
+        .roles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
+        }
+        
+        .role-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #dbeafe;
+        }
+        
+        .role-card.admin {
+            border-top: 4px solid #dc2626;
+        }
+        
+        .role-card.dealer {
+            border-top: 4px solid #059669;
+        }
+        
+        .role-card.user {
+            border-top: 4px solid #2563eb;
+        }
+        
+        .role-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .role-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .role-icon.admin {
+            background: #dc2626;
+        }
+        
+        .role-icon.dealer {
+            background: #059669;
+        }
+        
+        .role-icon.user {
+            background: #2563eb;
+        }
+        
+        .role-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .role-description {
+            color: #64748b;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        
+        .role-features {
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+        
+        .role-features li {
+            margin-bottom: 12px;
+            color: #475569;
+            padding-left: 5px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .role-features i {
+            color: #059669;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        
+        .role-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: auto;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        }
+        
+        .role-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .role-btn.admin {
+            background: #dc2626;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+        }
+        
+        .role-btn.admin:hover {
+            background: #b91c1c;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        .role-btn.dealer {
+            background: #059669;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+        }
+        
+        .role-btn.dealer:hover {
+            background: #047857;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .footer-text {
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            animation: modalSlide 0.3s ease;
+        }
+        
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-modal {
+            background: #f1f5f9;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #64748b;
+            transition: all 0.3s;
+        }
+        
+        .close-modal:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+        
+        /* Form Styles */
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .auth-tab:hover {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        
+        .auth-tab.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            color: #334155;
+            background: #ffffff;
+            font-family: inherit;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-success {
+            background: #059669;
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-success:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        
+        /* Message Styles */
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        
+        /* Demo Credentials */
+        .demo-credentials {
+            background: #f0f9ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .demo-credentials h4 {
+            color: #1e40af;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .demo-accounts {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .demo-account {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .demo-account .role {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .demo-account .role.admin {
+            color: #dc2626;
+        }
+        
+        .demo-account .role.dealer {
+            color: #059669;
+        }
+        
+        .demo-account .role.user {
+            color: #2563eb;
+        }
+        
+        .demo-account .email {
+            font-size: 0.9rem;
+            color: #475569;
+            margin-bottom: 5px;
+            font-family: monospace;
+        }
+        
+        .demo-account .password {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-family: monospace;
+            background: #f8fafc;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            header {
+                padding: 25px 20px;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+            
+            .logo-text {
+                font-size: 1.8rem;
+            }
+            
+            .auth-container {
+                position: static;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            
+            .roles-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .role-card {
+                padding: 25px;
+            }
+            
+            .modal-content {
+                padding: 30px 25px;
+            }
+            
+            .current-user {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .current-user-info {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 1.6rem;
+            }
+            
+            .logo-icon {
+                font-size: 2rem;
+                padding: 12px;
+            }
+            
+            .role-content {
+                padding: 20px;
+            }
+            
+            .role-title {
+                font-size: 1.3rem;
+            }
+            
+            .role-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.8rem;
+            }
+            
+            .modal-content {
+                padding: 25px 20px;
+            }
+            
+            .form-control {
+                padding: 12px;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+            }
+        }
+        
+        /* Indian Market Specific Elements */
+        .indian-market {
+            background: linear-gradient(135deg, #ff9933, #ffffff, #138808);
+            height: 3px;
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 2px;
+        }
+        
+        .feature-highlight {
+            background: #fff7ed;
+            border: 2px solid #fed7aa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .feature-highlight h4 {
+            color: #ea580c;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature-highlight ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-highlight li {
+            margin-bottom: 8px;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature-highlight li i {
+            color: #ea580c;
+        }
+        
+        /* Payment Methods */
+        .payment-methods {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .payment-method {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .payment-method.upi {
+            border-color: #10b981;
+            color: #059669;
+        }
+        
+        .payment-method.card {
+            border-color: #3b82f6;
+            color: #2563eb;
+        }
+        
+        .payment-method.netbanking {
+            border-color: #8b5cf6;
+            color: #7c3aed;
+        }
+        
+        /* Location Selector */
+        .location-selector {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            color: #475569;
+            margin-top: 10px;
+        }
+        
+        /* Language Selector */
+        .language-selector {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .language-btn {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .language-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+        
+        /* Stats Display */
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2563eb;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="auth-container" id="authButtons">
+                <button class="auth-btn" onclick="showModal('loginModal')">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="auth-btn" onclick="showModal('signupModal')">
+                    <i class="fas fa-user-plus"></i> Signup
+                </button>
+            </div>
+            
+            <div class="logo">
+                <i class="fas fa-car"></i>
+                <div>Car Marketplace</div>
+            </div>
+            <p class="tagline">
+                Your premier destination for buying and selling vehicles. 
+                Choose your role to enter the marketplace.
+            </p>
+            
+            <div id="currentUserDisplay" class="current-user" style="display: none;">
+                <div class="current-user-info">
+                    <span id="currentUserEmail"></span>
+                    <span id="currentUserRole" class="user-badge"></span>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+        
+        <div class="roles-container">
+            <!-- Admin Card -->
+            <div class="role-card">
+                <i class="fas fa-crown role-icon admin"></i>
+                <h2 class="role-title">Administrator</h2>
+                <p class="role-description">
+                    Full system control and management with complete access to all features and data.
+                </p>
+                <ul class="role-features">
+                    <li><i class="fas fa-check-circle"></i> Manage all users & cars</li>
+                    <li><i class="fas fa-check-circle"></i> View system analytics & reports</li>
+                    <li><i class="fas fa-check-circle"></i> Start and manage auctions</li>
+                    <li><i class="fas fa-check-circle"></i> Process contact requests</li>
+                    <li><i class="fas fa-check-circle"></i> Set user roles and permissions</li>
+                </ul>
+                <button class="role-btn admin-btn" onclick="enterAsAdmin()">
+                    <i class="fas fa-sign-in-alt"></i> Enter as Admin
+                </button>
+            </div>
+            
+            <!-- Dealer Card -->
+            <div class="role-card">
+                <i class="fas fa-store role-icon dealer"></i>
+                <h2 class="role-title">Dealer</h2>
+                <p class="role-description">
+                    Premium features for car dealers with special discounts and business tools.
+                </p>
+                <ul class="role-features">
+                    <li><i class="fas fa-check-circle"></i> 10% dealer discount on all cars</li>
+                    <li><i class="fas fa-check-circle"></i> Direct owner contact access</li>
+                    <li><i class="fas fa-check-circle"></i> Participate in live auctions</li>
+                    <li><i class="fas fa-check-circle"></i> Priority customer support</li>
+                    <li><i class="fas fa-check-circle"></i> Verified dealer badge</li>
+                </ul>
+                <button class="role-btn dealer-btn" onclick="enterAsDealer()">
+                    <i class="fas fa-sign-in-alt"></i> Enter as Dealer
+                </button>
+            </div>
+            
+            <!-- User Card -->
+            <div class="role-card">
+                <i class="fas fa-user role-icon user"></i>
+                <h2 class="role-title">User</h2>
+                <p class="role-description">
+                    Standard marketplace features for buying and selling vehicles.
+                </p>
+                <ul class="role-features">
+                    <li><i class="fas fa-check-circle"></i> Browse & search cars with filters</li>
+                    <li><i class="fas fa-check-circle"></i> View detailed car specifications</li>
+                    <li><i class="fas fa-check-circle"></i> Add your own cars for sale</li>
+                    <li><i class="fas fa-check-circle"></i> Manage listings in dashboard</li>
+                    <li><i class="fas fa-check-circle"></i> Contact sellers securely</li>
+                </ul>
+                <button class="role-btn user-btn" onclick="enterAsUser()">
+                    <i class="fas fa-sign-in-alt"></i> Enter as User
+                </button>
+            </div>
+        </div>
+        
+        
+        <footer>
+            <p>© 2024 Car Marketplace. All rights reserved.</p>
+            <p style="margin-top: 5px; font-size: 0.9rem;">
+                Choose your role to get started with the platform.
+            </p>
+        </footer>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </div>
+                <button class="close-modal" onclick="hideModal('loginModal')">&times;</button>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="showAuthTab('login')">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="auth-tab" onclick="showAuthTab('signup')">
+                    <i class="fas fa-user-plus"></i> Signup
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <label for="loginEmail"><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" value="user@example.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="loginPassword"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" value="user123">
+            </div>
+            
+            <button class="btn btn-primary" onclick="performLogin()">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            
+            <div id="loginMessage" class="message"></div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: #64748b;">Don't have an account? <a href="#" style="color: #3b82f6; font-weight: 600; text-decoration: none;" onclick="showModal('signupModal'); hideModal('loginModal')">Sign up here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-user-plus"></i> Signup
+                </div>
+                <button class="close-modal" onclick="hideModal('signupModal')">&times;</button>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab" onclick="showAuthTab('login')">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="auth-tab active" onclick="showAuthTab('signup')">
+                    <i class="fas fa-user-plus"></i> Signup
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <label for="signupName"><i class="fas fa-user"></i> Full Name</label>
+                <input type="text" id="signupName" class="form-control" placeholder="Enter your full name">
+            </div>
+            
+            <div class="form-group">
+                <label for="signupEmail"><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" id="signupEmail" class="form-control" placeholder="Enter your email">
+            </div>
+            
+            <div class="form-group">
+                <label for="signupPassword"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="signupPassword" class="form-control" placeholder="Create a password">
+            </div>
+            
+            <div class="form-group">
+                <label for="signupConfirmPassword"><i class="fas fa-lock"></i> Confirm Password</label>
+                <input type="password" id="signupConfirmPassword" class="form-control" placeholder="Confirm your password">
+            </div>
+            
+            <div class="form-group">
+                <label for="signupRole"><i class="fas fa-user-tag"></i> Account Type</label>
+                <select id="signupRole" class="form-control" onchange="toggleDealerFields()">
+                    <option value="">Select account type</option>
+                    <option value="user">👤 User (Free)</option>
+                    <option value="dealer">🏢 Dealer (₹2,000 activation fee)</option>
+                </select>
+            </div>
+            
+            <div id="dealerFields" style="display: none;">
+                <div class="form-group">
+                    <label for="signupDealership"><i class="fas fa-store"></i> Dealership Name</label>
+                    <input type="text" id="signupDealership" class="form-control" placeholder="Enter dealership name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupPhone"><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" id="signupPhone" class="form-control" placeholder="Enter phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupAddress"><i class="fas fa-map-marker-alt"></i> Business Address</label>
+                    <textarea id="signupAddress" class="form-control" placeholder="Enter business address" rows="3"></textarea>
+                </div>
+                
+                <div class="message info">
+                    <i class="fas fa-info-circle"></i> Dealer accounts require a one-time ₹2,000 activation fee to unlock premium features.
+                </div>
+            </div>
+            
+            <button class="btn btn-success" onclick="performSignup()">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+            
+            <div id="signupMessage" class="message"></div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: #64748b;">Already have an account? <a href="#" style="color: #3b82f6; font-weight: 600; text-decoration: none;" onclick="showModal('loginModal'); hideModal('signupModal')">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzdzfV_LCZKCm0onvaPjtpCV8pSIAwI8-CpDdIFROcCn1cCQ2T94LCYwjHGHiDUSaxE/exec";
+        
+        let currentUser = null;
+        
+        /* ==================== INITIALIZATION ==================== */
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+        });
+        
+        /* ==================== AUTHENTICATION ==================== */
+        function checkAuthStatus() {
+            const savedUser = localStorage.getItem('carMarketUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUIForUser();
+            }
+        }
+        
+        function updateUIForUser() {
+            const authButtons = document.getElementById('authButtons');
+            const currentUserDisplay = document.getElementById('currentUserDisplay');
+            const currentUserEmail = document.getElementById('currentUserEmail');
+            const currentUserRole = document.getElementById('currentUserRole');
+            
+            if (currentUser) {
+                authButtons.style.display = 'none';
+                currentUserDisplay.style.display = 'flex';
+                currentUserEmail.textContent = currentUser.email;
+                currentUserRole.textContent = currentUser.role;
+                currentUserRole.className = `user-badge ${currentUser.role}`;
+            } else {
+                authButtons.style.display = 'flex';
+                currentUserDisplay.style.display = 'none';
+            }
+        }
+        
+        function performLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showMessage('loginMessage', 'Please enter email and password', 'error');
+                return;
+            }
+            
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'login',
+                    email: email,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    currentUser = {
+                        email: email,
+                        role: data.role,
+                        dealerActive: data.dealerActive,
+                        name: data.name || email.split('@')[0],
+                        phone: data.phone || '',
+                        address: data.address || '',
+                        dealership: data.dealership || ''
+                    };
+                    
+                    localStorage.setItem('carMarketUser', JSON.stringify(currentUser));
+                    updateUIForUser();
+                    hideModal('loginModal');
+                    showMessage('loginMessage', '✅ Login successful! Redirecting...', 'success');
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        redirectBasedOnRole();
+                    }, 1500);
+                    
+                } else {
+                    showMessage('loginMessage', '❌ Login failed. Check credentials.', 'error');
+                }
+            })
+            .catch(err => {
+                showMessage('loginMessage', '❌ Error: ' + err.message, 'error');
+                // For demo purposes, allow login even if API fails
+                demoLogin(email, password);
+            });
+        }
+        
+        function demoLogin(email, password) {
+            // Demo login logic for testing
+            let demoUser = null;
+            
+            if (email === 'admin@example.com' && password === 'admin123') {
+                demoUser = {
+                    email: email,
+                    role: 'admin',
+                    dealerActive: 'YES',
+                    name: 'Admin User',
+                    phone: '9876543210',
+                    address: 'Admin Office, City'
+                };
+            } else if (email === 'dealer@example.com' && password === 'dealer123') {
+                demoUser = {
+                    email: email,
+                    role: 'dealer',
+                    dealerActive: 'NO',
+                    name: 'Demo Dealer',
+                    phone: '9876543211',
+                    address: 'Dealer Street, City',
+                    dealership: 'Premium Auto Dealers'
+                };
+            } else if (email === 'user@example.com' && password === 'user123') {
+                demoUser = {
+                    email: email,
+                    role: 'user',
+                    dealerActive: 'NO',
+                    name: 'Demo User',
+                    phone: '9876543212',
+                    address: 'User Street, City'
+                };
+            }
+            
+            if (demoUser) {
+                currentUser = demoUser;
+                localStorage.setItem('carMarketUser', JSON.stringify(currentUser));
+                updateUIForUser();
+                hideModal('loginModal');
+                showMessage('loginMessage', '✅ Demo login successful! Redirecting...', 'success');
+                
+                setTimeout(() => {
+                    redirectBasedOnRole();
+                }, 1500);
+            } else {
+                showMessage('loginMessage', '❌ Invalid demo credentials. Try: user@example.com / user123', 'error');
+            }
+        }
+        
+        function performSignup() {
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            const role = document.getElementById('signupRole').value;
+            const dealership = document.getElementById('signupDealership')?.value.trim() || '';
+            const phone = document.getElementById('signupPhone')?.value.trim() || '';
+            const address = document.getElementById('signupAddress')?.value.trim() || '';
+            
+            if (!name || !email || !password || !confirmPassword || !role) {
+                showMessage('signupMessage', 'Please fill all required fields', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('signupMessage', 'Passwords do not match', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('signupMessage', 'Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            if (role === 'dealer' && (!dealership || !phone || !address)) {
+                showMessage('signupMessage', 'Please fill all dealer information', 'error');
+                return;
+            }
+            
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'signup',
+                    email: email,
+                    password: password,
+                    role: role,
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    dealership: dealership
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    showMessage('signupMessage', '✅ Signup successful! You can now login.', 'success');
+                    
+                    // Clear form
+                    document.getElementById('signupName').value = '';
+                    document.getElementById('signupEmail').value = '';
+                    document.getElementById('signupPassword').value = '';
+                    document.getElementById('signupConfirmPassword').value = '';
+                    document.getElementById('signupRole').value = '';
+                    if (document.getElementById('signupDealership')) {
+                        document.getElementById('signupDealership').value = '';
+                        document.getElementById('signupPhone').value = '';
+                        document.getElementById('signupAddress').value = '';
+                    }
+                    
+                    // Switch to login modal after 2 seconds
+                    setTimeout(() => {
+                        hideModal('signupModal');
+                        showModal('loginModal');
+                    }, 2000);
+                } else {
+                    showMessage('signupMessage', '❌ ' + (data.message || 'Signup failed'), 'error');
+                }
+            })
+            .catch(err => {
+                showMessage('signupMessage', '❌ Error: ' + err.message, 'error');
+                // For demo purposes, allow signup even if API fails
+                demoSignup(name, email, password, role, dealership, phone, address);
+            });
+        }
+        
+        function demoSignup(name, email, password, role, dealership, phone, address) {
+            // Demo signup logic
+            const demoUser = {
+                email: email,
+                role: role,
+                dealerActive: role === 'dealer' ? 'NO' : 'NO',
+                name: name,
+                phone: phone,
+                address: address,
+                dealership: dealership
+            };
+            
+            // Save to localStorage for demo
+            localStorage.setItem(`demo_user_${email}`, JSON.stringify({
+                email: email,
+                password: password,
+                role: role,
+                name: name,
+                phone: phone,
+                address: address,
+                dealership: dealership
+            }));
+            
+            showMessage('signupMessage', '✅ Demo signup successful! You can now login.', 'success');
+            
+            // Clear form
+            document.getElementById('signupName').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('signupConfirmPassword').value = '';
+            document.getElementById('signupRole').value = '';
+            if (document.getElementById('signupDealership')) {
+                document.getElementById('signupDealership').value = '';
+                document.getElementById('signupPhone').value = '';
+                document.getElementById('signupAddress').value = '';
+            }
+            
+            // Switch to login modal after 2 seconds
+            setTimeout(() => {
+                hideModal('signupModal');
+                showModal('loginModal');
+            }, 2000);
+        }
+        
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('carMarketUser');
+            updateUIForUser();
+            showMessage('loginMessage', 'Logged out successfully', 'success');
+        }
+        
+        /* ==================== MODAL FUNCTIONS ==================== */
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // Clear messages
+            document.getElementById('loginMessage').innerHTML = '';
+            document.getElementById('loginMessage').className = 'message';
+            document.getElementById('signupMessage').innerHTML = '';
+            document.getElementById('signupMessage').className = 'message';
+        }
+        
+        function showAuthTab(tab) {
+            // Update tabs
+            document.querySelectorAll('.auth-tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (tab === 'login') {
+                hideModal('signupModal');
+                showModal('loginModal');
+            } else {
+                hideModal('loginModal');
+                showModal('signupModal');
+            }
+        }
+        
+        function toggleDealerFields() {
+            const role = document.getElementById('signupRole').value;
+            const dealerFields = document.getElementById('dealerFields');
+            
+            if (role === 'dealer') {
+                dealerFields.style.display = 'block';
+            } else {
+                dealerFields.style.display = 'none';
+            }
+        }
+        
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+            element.className = `message ${type}`;
+            setTimeout(() => {
+                element.innerHTML = '';
+                element.className = 'message';
+            }, 5000);
+        }
+        
+        /* ==================== ROLE SELECTION ==================== */
+        function enterAsAdmin() {
+            if (!currentUser) {
+                showModal('loginModal');
+                showMessage('loginMessage', 'Please login first', 'info');
+                return;
+            }
+            
+            if (currentUser.role !== 'admin') {
+                alert('You need an admin account to access the admin panel.');
+                return;
+            }
+            
+            window.location.href = 'admin.html';
+        }
+        
+        function enterAsDealer() {
+            if (!currentUser) {
+                showModal('loginModal');
+                showMessage('loginMessage', 'Please login first', 'info');
+                return;
+            }
+            
+            if (currentUser.role !== 'dealer') {
+                alert('You need a dealer account to access dealer features.');
+                return;
+            }
+            
+            window.location.href = 'dealer.html';
+        }
+        
+        function enterAsUser() {
+            if (!currentUser) {
+                showModal('loginModal');
+                showMessage('loginMessage', 'Please login first', 'info');
+                return;
+            }
+            
+            window.location.href = 'user.html';
+        }
+        
+        function redirectBasedOnRole() {
+            if (!currentUser) return;
+            
+            switch(currentUser.role) {
+                case 'admin':
+                    window.location.href = 'admin.html';
+                    break;
+                case 'dealer':
+                    window.location.href = 'dealer.html';
+                    break;
+                default:
+                    window.location.href = 'user.html';
+                    break;
+            }
+        }
+        
+        /* ==================== QUICK ACCESS ==================== */
+        // Allow quick access with URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const quickRole = urlParams.get('role');
+        const quickLogin = urlParams.get('login');
+        
+        if (quickLogin === 'demo') {
+            // Auto-login as demo user based on role
+            switch(quickRole) {
+                case 'admin':
+                    demoLogin('admin@example.com', 'admin123');
+                    break;
+                case 'dealer':
+                    demoLogin('dealer@example.com', 'dealer123');
+                    break;
+                case 'user':
+                default:
+                    demoLogin('user@example.com', 'user123');
+                    break;
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                });
+            }
+        });
+        
+        // Add click animations to role cards
+        document.querySelectorAll('.role-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('role-btn')) {
+                    const role = this.querySelector('.role-btn').getAttribute('onclick').match(/enterAs(\w+)/)[1].toLowerCase();
+                    switch(role) {
+                        case 'admin':
+                            enterAsAdmin();
+                            break;
+                        case 'dealer':
+                            enterAsDealer();
+                            break;
+                        case 'user':
+                            enterAsUser();
+                            break;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
