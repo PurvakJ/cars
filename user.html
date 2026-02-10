@@ -1,0 +1,2350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Marketplace - User</title>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ==================== COMMON STYLES ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  min-height: 100vh;
+}
+
+/* Header */
+header {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.logo i {
+  font-size: 2rem;
+  color: #93c5fd;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-badge {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Navigation */
+nav {
+  background: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.nav-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #475569;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.nav-btn.active {
+  background: #3b82f6;
+  color: white;
+}
+
+/* Main Container */
+.container {
+  max-width: 1280px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+/* Pages */
+.page {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page.active {
+  display: block;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Car Grid */
+.cars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.car-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.car-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+  border-color: #3b82f6;
+}
+
+.car-image-container {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.car-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.car-card:hover .car-image {
+  transform: scale(1.05);
+}
+
+.car-content {
+  padding: 1.5rem;
+}
+
+.car-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.car-price {
+  color: #10b981;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.car-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.car-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.car-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+/* Status Badges */
+.car-status {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  z-index: 2;
+}
+
+.status-active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.status-inactive {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.status-sold {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+/* Buttons */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #64748b, #475569);
+  color: white;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s;
+  background: white;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.close-modal {
+  background: #f1f5f9;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #64748b;
+  transition: all 0.3s;
+}
+
+.close-modal:hover {
+  background: #ef4444;
+  color: white;
+  transform: rotate(90deg);
+}
+
+/* Dashboard */
+.dashboard {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.dashboard-sidebar {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  height: fit-content;
+}
+
+.sidebar-menu {
+  list-style: none;
+}
+
+.sidebar-menu li {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-menu button {
+  width: 100%;
+  text-align: left;
+  padding: 14px 20px;
+  border: none;
+  background: none;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s;
+}
+
+.sidebar-menu button:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.sidebar-menu button.active {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.dashboard-content {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.dashboard-section {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.dashboard-section.active {
+  display: block;
+}
+
+/* Car Details */
+.car-details-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.car-details-images img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.detail-item {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border-left: 4px solid #3b82f6;
+}
+
+.detail-item h4 {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.detail-item p {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Search & Filter */
+.search-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+/* Messages */
+.message {
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin: 1.5rem 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.message.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.message.info {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+.tab {
+  padding: 12px 24px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  font-weight: 600;
+  color: #64748b;
+  transition: all 0.3s;
+}
+
+.tab:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.tab.active {
+  background: #3b82f6;
+  color: white;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #94a3b8;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+  
+  .search-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .nav-content {
+    justify-content: center;
+  }
+  
+  .cars-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+    margin: 10px;
+  }
+  
+  .car-actions {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="logo">
+      <i class="fas fa-car"></i>
+      Car Marketplace - User
+    </div>
+    <div class="user-info">
+      <span id="userEmail"></span>
+      <span id="userRole" class="user-badge">User</span>
+      <button id="logoutBtn" class="btn btn-secondary" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-content">
+    <button class="nav-btn active" onclick="showPage('home')">
+      <i class="fas fa-home"></i> Home
+    </button>
+    <button class="nav-btn" onclick="showPage('cars')">
+      <i class="fas fa-car"></i> Browse Cars
+    </button>
+    <button class="nav-btn" onclick="showPage('dashboard')">
+      <i class="fas fa-tachometer-alt"></i> Dashboard
+    </button>
+    <button class="nav-btn" onclick="showPage('contact')">
+      <i class="fas fa-phone"></i> Contact
+    </button>
+    <button class="nav-btn" onclick="showAddCarModal()">
+      <i class="fas fa-plus-circle"></i> Add Car
+    </button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Home Page -->
+  <div id="home" class="page active">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-home"></i> Welcome to Car Marketplace
+      </div>
+      <p style="color: #64748b; font-size: 1.1rem; line-height: 1.6;">
+        Your premier destination for buying and selling vehicles. 
+        Browse thousands of cars from trusted sellers.
+      </p>
+      
+      <div class="tabs">
+        <button class="tab active" onclick="showUserType('user')">
+          <i class="fas fa-user"></i> For Users
+        </button>
+        <button class="tab" onclick="showUserType('dealer')">
+          <i class="fas fa-store"></i> For Dealers
+        </button>
+        <button class="tab" onclick="showUserType('admin')">
+          <i class="fas fa-crown"></i> For Admin
+        </button>
+      </div>
+      
+      <div id="userTypeContent" class="card">
+        <h3 style="color: #1e293b; margin-bottom: 1rem;">
+          <i class="fas fa-user"></i> For Regular Users
+        </h3>
+        <ul style="color: #475569; line-height: 1.8; padding-left: 1.5rem;">
+          <li>Browse and search cars with advanced filters</li>
+          <li>View detailed car specifications</li>
+          <li>Add your own cars for sale</li>
+          <li>Manage all your listings in one dashboard</li>
+          <li>Contact sellers through secure system</li>
+        </ul>
+      </div>
+    </div>
+    
+    <h2 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+      <i class="fas fa-star"></i> Featured Cars
+    </h2>
+    <div id="featuredCars" class="cars-grid">
+      <!-- Featured cars will load here -->
+    </div>
+  </div>
+
+  <!-- Cars Page -->
+  <div id="cars" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-car"></i> Browse All Cars
+      </div>
+      
+      <div class="search-container">
+        <input type="text" id="searchCar" class="form-control" placeholder="🔍 Search cars by name or description..." onkeyup="filterCars()">
+        <select id="filterCategory" class="form-control" onchange="filterCars()">
+          <option value="">📂 All Categories</option>
+          <option value="SUV">🚙 SUV</option>
+          <option value="Sedan">🚗 Sedan</option>
+          <option value="Hatchback">🚘 Hatchback</option>
+          <option value="Luxury">🏎️ Luxury</option>
+          <option value="Sports">⚡ Sports</option>
+          <option value="Electric">🔋 Electric</option>
+        </select>
+        <select id="filterPrice" class="form-control" onchange="filterCars()">
+          <option value="">💰 Price Range</option>
+          <option value="0-500000">Under ₹5L</option>
+          <option value="500000-1000000">₹5L - ₹10L</option>
+          <option value="1000000-2000000">₹10L - ₹20L</option>
+          <option value="2000000-5000000">₹20L - ₹50L</option>
+          <option value="5000000-100000000">Above ₹50L</option>
+        </select>
+      </div>
+    </div>
+    
+    <div id="carsContainer" class="cars-grid">
+      <!-- Cars will load here -->
+    </div>
+  </div>
+
+  <!-- Dashboard Page -->
+  <div id="dashboard" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-tachometer-alt"></i> My Dashboard
+      </div>
+      <p style="color: #64748b;">Manage your profile, cars, and activities</p>
+    </div>
+    
+    <div class="dashboard">
+      <div class="dashboard-sidebar">
+        <ul class="sidebar-menu">
+          <li><button onclick="showDashboardSection('profile')" class="active">
+            <i class="fas fa-user"></i> My Profile
+          </button></li>
+          <li><button onclick="showDashboardSection('myCars')">
+            <i class="fas fa-car"></i> My Cars
+          </button></li>
+          <li><button onclick="showDashboardSection('addCar')">
+            <i class="fas fa-plus-circle"></i> Add New Car
+          </button></li>
+          <li><button onclick="showDashboardSection('requests')">
+            <i class="fas fa-envelope"></i> My Requests
+          </button></li>
+        </ul>
+      </div>
+      
+      <div class="dashboard-content">
+        <!-- Profile Section -->
+        <div id="dashboardProfile" class="dashboard-section active">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-user-circle"></i> My Profile
+          </h3>
+          
+          <div class="details-grid">
+            <div class="detail-item">
+              <h4>Email</h4>
+              <p id="dashboardUserEmail"></p>
+            </div>
+            <div class="detail-item">
+              <h4>Role</h4>
+              <p id="dashboardUserRole"></p>
+            </div>
+            <div class="detail-item">
+              <h4>Name</h4>
+              <p id="dashboardUserName"></p>
+            </div>
+            <div class="detail-item">
+              <h4>Phone</h4>
+              <p id="dashboardUserPhone"></p>
+            </div>
+          </div>
+          
+          <h4 style="color: #1e293b; margin: 2rem 0 1rem;">
+            <i class="fas fa-edit"></i> Update Profile
+          </h4>
+          
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Full Name</label>
+            <input type="text" id="dashboardName" class="form-control" placeholder="Enter your full name">
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Phone Number</label>
+            <input type="tel" id="dashboardPhone" class="form-control" placeholder="Enter your phone number">
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-map-marker-alt"></i> Address</label>
+            <textarea id="dashboardAddress" class="form-control" placeholder="Enter your address" rows="3"></textarea>
+          </div>
+          
+          <button class="btn btn-primary" onclick="updateDashboardProfile()">
+            <i class="fas fa-save"></i> Update Profile
+          </button>
+          <div id="profileMessage" class="message"></div>
+        </div>
+        
+        <!-- My Cars Section -->
+        <div id="dashboardMyCars" class="dashboard-section">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-car"></i> My Cars
+          </h3>
+          <div id="myCarsList" class="cars-grid">
+            <!-- User's cars will load here -->
+          </div>
+        </div>
+        
+        <!-- Add Car Section -->
+        <div id="dashboardAddCar" class="dashboard-section">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-plus-circle"></i> Add New Car
+          </h3>
+          
+          <div class="form-group">
+            <label><i class="fas fa-heading"></i> Car Title</label>
+            <input type="text" id="dashboardCarTitle" class="form-control" placeholder="e.g., Toyota Fortuner 2023">
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-tag"></i> Price (₹)</label>
+            <input type="number" id="dashboardCarPrice" class="form-control" placeholder="Enter price in rupees">
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-align-left"></i> Description</label>
+            <textarea id="dashboardCarDesc" class="form-control" placeholder="Describe the car features, condition, etc." rows="4"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-image"></i> Image URLs (comma separated)</label>
+            <input type="text" id="dashboardCarImages" class="form-control" placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg">
+            <small style="color: #64748b; display: block; margin-top: 5px;">
+              Add multiple image URLs separated by commas
+            </small>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-folder"></i> Category</label>
+            <select id="dashboardCarCategory" class="form-control">
+              <option value="">Select Category</option>
+              <option value="SUV">🚙 SUV</option>
+              <option value="Sedan">🚗 Sedan</option>
+              <option value="Hatchback">🚘 Hatchback</option>
+              <option value="Luxury">🏎️ Luxury</option>
+              <option value="Sports">⚡ Sports</option>
+              <option value="Electric">🔋 Electric</option>
+            </select>
+          </div>
+          
+          <button class="btn btn-primary btn-block" onclick="addCarFromDashboard()">
+            <i class="fas fa-plus"></i> Add Car
+          </button>
+          <div id="dashboardAddCarMessage" class="message"></div>
+        </div>
+        
+        <!-- Requests Section -->
+        <div id="dashboardRequests" class="dashboard-section">
+          <h3 style="color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-envelope"></i> My Contact Requests
+          </h3>
+          <div id="myRequestsList">
+            <!-- Requests will load here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Page -->
+  <div id="contact" class="page">
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-phone"></i> Contact Us
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+        <div class="detail-item">
+          <h4><i class="fas fa-envelope"></i> Email</h4>
+          <p>support@carmarketplace.com</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-phone"></i> Phone</h4>
+          <p>+1 (555) 123-4567</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-map-marker-alt"></i> Address</h4>
+          <p>123 Car Street, Auto City</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-clock"></i> Business Hours</h4>
+          <p>Mon-Fri: 9AM-6PM</p>
+          <p>Sat: 10AM-4PM</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Login Modal (For Demo - since we auto-login) -->
+<div id="loginModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-sign-in-alt"></i> User Login
+      </div>
+      <button class="close-modal" onclick="hideModal('loginModal')">&times;</button>
+    </div>
+    
+    <div class="form-group">
+      <input type="email" id="email" class="form-control" placeholder="📧 Email Address" value="user@example.com">
+    </div>
+    
+    <div class="form-group">
+      <input type="password" id="password" class="form-control" placeholder="🔒 Password" value="password123">
+    </div>
+    
+    <button class="btn btn-success btn-block" onclick="login()">
+      <i class="fas fa-sign-in-alt"></i> Login
+    </button>
+    
+    <div id="loginMessage" class="message"></div>
+  </div>
+</div>
+
+<!-- Car Details Modal -->
+<div id="carDetailsModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="carDetailTitle"></div>
+      <button class="close-modal" onclick="hideModal('carDetailsModal')">&times;</button>
+    </div>
+    
+    <div id="carDetailsContent">
+      <!-- Car details will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- Edit Car Modal -->
+<div id="editCarModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-edit"></i> Edit Car
+      </div>
+      <button class="close-modal" onclick="hideModal('editCarModal')">&times;</button>
+    </div>
+    
+    <div id="editCarContent">
+      <!-- Edit car form will load here -->
+    </div>
+  </div>
+</div>
+
+<!-- Complete Details Modal -->
+<div id="completeDetailsModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-info-circle"></i> Complete Car Details
+      </div>
+      <button class="close-modal" onclick="hideModal('completeDetailsModal')">&times;</button>
+    </div>
+    <div id="completeDetailsContent"></div>
+  </div>
+</div>
+
+<script>
+// Update this with your actual Google Apps Script URL
+const API_URL = "https://script.google.com/macros/s/AKfycbymbaeEfQTyJedYozT4w_nUJCRrRr_4CbB_IgyVToXLJHHLXLOR-B0c-yv-aCM19xEQ/exec";
+const USER_TYPE = 'user';
+
+let currentUser = null;
+let allCars = [];
+let currentViewingCarId = null;
+
+/* ==================== INITIALIZATION ==================== */
+document.addEventListener('DOMContentLoaded', function() {
+  checkAuthStatus();
+  loadFeaturedCars();
+  loadCars();
+});
+
+/* ==================== AUTHENTICATION ==================== */
+function checkAuthStatus() {
+  const savedUser = localStorage.getItem('carMarketUser');
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    updateUIForUser();
+    loadDashboardData();
+  } else {
+    // Auto-login for demo
+    autoLogin();
+  }
+}
+
+function autoLogin() {
+  currentUser = {
+    email: 'user@example.com',
+    role: 'user',
+    name: 'Demo User',
+    phone: '9876543210',
+    address: '123 User Street, City',
+    dealerActive: 'NO'
+  };
+  
+  localStorage.setItem('carMarketUser', JSON.stringify(currentUser));
+  updateUIForUser();
+  loadDashboardData();
+}
+
+function login() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!email || !password) {
+    showMessage('loginMessage', 'Please enter email and password', 'error');
+    return;
+  }
+
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'login',
+      email: email,
+      password: password
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'ok') {
+      currentUser = {
+        email: email,
+        role: data.role,
+        dealerActive: data.dealerActive,
+        name: localStorage.getItem(`profile_${email}_name`) || email.split('@')[0],
+        phone: localStorage.getItem(`profile_${email}_phone`) || '',
+        address: localStorage.getItem(`profile_${email}_address`) || ''
+      };
+      
+      localStorage.setItem('carMarketUser', JSON.stringify(currentUser));
+      updateUIForUser();
+      hideModal('loginModal');
+      showMessage('loginMessage', '✅ Login successful!', 'success');
+      loadUserProfile();
+      loadCars();
+      loadDashboardData();
+    } else {
+      showMessage('loginMessage', '❌ Login failed. Check credentials.', 'error');
+    }
+  })
+  .catch(err => {
+    showMessage('loginMessage', '❌ Error: ' + err.message, 'error');
+  });
+}
+
+function logout() {
+  localStorage.removeItem('carMarketUser');
+  window.location.href = 'main.html';
+}
+
+function updateUIForUser() {
+  if (currentUser) {
+    document.getElementById('userEmail').textContent = currentUser.email;
+    document.getElementById('userRole').textContent = currentUser.role;
+    document.getElementById('userRole').className = `user-badge ${currentUser.role}`;
+    
+    document.getElementById('dashboardUserEmail').textContent = currentUser.email;
+    document.getElementById('dashboardUserName').textContent = currentUser.name;
+    document.getElementById('dashboardUserPhone').textContent = currentUser.phone;
+    document.getElementById('dashboardUserRole').innerHTML = `<span class="user-badge ${currentUser.role}">${currentUser.role}</span>`;
+    
+    // Set form values
+    document.getElementById('dashboardName').value = currentUser.name;
+    document.getElementById('dashboardPhone').value = currentUser.phone;
+    document.getElementById('dashboardAddress').value = currentUser.address;
+  }
+}
+
+/* ==================== NAVIGATION ==================== */
+function showPage(pageId) {
+  // Update nav buttons
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelector(`.nav-btn[onclick*="${pageId}"]`)?.classList.add('active');
+  
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(page => {
+    page.classList.remove('active');
+  });
+  
+  // Show selected page
+  document.getElementById(pageId).classList.add('active');
+  
+  // Load data for specific pages
+  switch(pageId) {
+    case 'home':
+      loadFeaturedCars();
+      break;
+    case 'cars':
+      loadCars();
+      break;
+    case 'dashboard':
+      showDashboardSection('profile');
+      loadDashboardData();
+      break;
+  }
+}
+
+function showDashboardSection(sectionId) {
+  // Update sidebar buttons
+  document.querySelectorAll('.sidebar-menu button').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  const activeButton = document.querySelector(`.sidebar-menu button[onclick*="${sectionId}"]`);
+  if (activeButton) activeButton.classList.add('active');
+  
+  // Hide all sections
+  document.querySelectorAll('.dashboard-section').forEach(section => {
+    section.classList.remove('active');
+  });
+  
+  // Show selected section
+  document.getElementById(`dashboard${sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}`).classList.add('active');
+  
+  // Load section data
+  switch(sectionId) {
+    case 'myCars':
+      loadMyCars();
+      break;
+    case 'requests':
+      loadMyRequests();
+      break;
+  }
+}
+
+/* ==================== MODAL FUNCTIONS ==================== */
+function showModal(modalId) {
+  document.getElementById(modalId).classList.remove('hidden');
+}
+
+function hideModal(modalId) {
+  document.getElementById(modalId).classList.add('hidden');
+}
+
+function showMessage(elementId, message, type) {
+  const element = document.getElementById(elementId);
+  element.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+  element.className = `message ${type}`;
+  if (message) {
+    setTimeout(() => {
+      element.innerHTML = '';
+      element.className = 'message';
+    }, 5000);
+  }
+}
+
+/* ==================== CAR MANAGEMENT ==================== */
+function loadFeaturedCars() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getCars' })
+  })
+  .then(response => response.json())
+  .then(cars => {
+    const featuredContainer = document.getElementById('featuredCars');
+    featuredContainer.innerHTML = '';
+    
+    // Filter: Show only active cars from dealers/admins + user's own cars
+    const featuredCars = cars.filter(car => {
+      const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+      
+      if (status !== 'ACTIVE') return false;
+      
+      if (ownerRole === 'dealer' || ownerRole === 'admin') return true;
+      
+      if (currentUser && ownerEmail === currentUser.email) return true;
+      
+      return false;
+    }).slice(0, 6);
+    
+    if (featuredCars.length === 0) {
+      featuredContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🚗</div>
+          <h3>No Featured Cars</h3>
+          <p>No cars available at the moment.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    featuredCars.forEach(car => {
+      const carCard = createCarCard(car);
+      featuredContainer.appendChild(carCard);
+    });
+  })
+  .catch(err => console.error('Error loading featured cars:', err));
+}
+
+function loadCars() {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getCars' })
+  })
+  .then(response => response.json())
+  .then(cars => {
+    allCars = cars;
+    displayCars(cars);
+  })
+  .catch(err => console.error('Error loading cars:', err));
+}
+
+function displayCars(cars) {
+  const container = document.getElementById('carsContainer');
+  container.innerHTML = '';
+  
+  if (cars.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🚗</div>
+        <h3>No Cars Found</h3>
+        <p>No cars match your search criteria.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Filter cars based on user role
+  const filteredCars = cars.filter(car => {
+    const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+    
+    // Show active cars from dealers/admins
+    if (status === 'ACTIVE' && (ownerRole === 'dealer' || ownerRole === 'admin')) {
+      return true;
+    }
+    
+    // Show user's own cars (all statuses)
+    if (currentUser && ownerEmail === currentUser.email) {
+      return true;
+    }
+    
+    return false;
+  });
+  
+  if (filteredCars.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🚗</div>
+        <h3>No Cars Available</h3>
+        <p>No cars available for your account type.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  filteredCars.forEach(car => {
+    const carCard = createCarCard(car);
+    container.appendChild(carCard);
+  });
+}
+
+function createCarCard(car) {
+  const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+  
+  const images = imagesJson ? JSON.parse(imagesJson) : [];
+  const mainImage = images.length > 0 ? images[0] : 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop';
+  
+  const isOwnCar = currentUser && ownerEmail === currentUser.email;
+  
+  // Check if user is active dealer to see dealer price
+  const isActiveDealer = currentUser && currentUser.role === 'dealer' && currentUser.dealerActive === 'YES';
+  
+  const card = document.createElement('div');
+  card.className = 'car-card';
+  
+  let statusBadge = '';
+  if (isOwnCar) {
+    statusBadge = `<span class="car-status ${status === 'ACTIVE' ? 'status-active' : status === 'SOLD' ? 'status-sold' : 'status-inactive'}">${status}</span>`;
+  }
+  
+  // Show dealer price if user is active dealer
+  const priceDisplay = isActiveDealer && dealerPrice && dealerPrice !== price ? 
+    `<p class="car-price">
+      <i class="fas fa-tag"></i> ₹${Number(price).toLocaleString()}
+      <br><small style="color: #10b981; font-size: 0.9rem;">
+        <i class="fas fa-user-tie"></i> Dealer Price: ₹${Number(dealerPrice).toLocaleString()}
+      </small>
+    </p>` :
+    `<p class="car-price"><i class="fas fa-tag"></i> ₹${Number(price).toLocaleString()}</p>`;
+  
+  card.innerHTML = `
+    ${statusBadge}
+    <div class="car-image-container">
+      <img src="${mainImage}" alt="${title}" class="car-image" 
+           onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop'">
+    </div>
+    <div class="car-content">
+      <h3 class="car-title">${title}</h3>
+      ${priceDisplay}
+      <div class="car-meta">
+        <span><i class="fas fa-folder"></i> ${category || 'No category'}</span>
+        <span><i class="fas fa-user-tag"></i> ${ownerRole}</span>
+      </div>
+      <div class="car-actions">
+        <button class="btn btn-primary btn-small" onclick="viewCarDetails('${id}')">
+          <i class="fas fa-eye"></i> View
+        </button>
+        ${isOwnCar ? 
+          `<button class="btn btn-warning btn-small" onclick="editMyCar('${id}')">
+            <i class="fas fa-edit"></i> Edit
+          </button>` : 
+          `<button class="btn btn-secondary btn-small" onclick="requestContact('${id}', '${ownerEmail}')">
+            <i class="fas fa-phone"></i> Contact Owner
+          </button>`
+        }
+      </div>
+    </div>
+  `;
+  
+  return card;
+}
+
+function filterCars() {
+  const searchTerm = document.getElementById('searchCar').value.toLowerCase();
+  const category = document.getElementById('filterCategory').value;
+  const priceRange = document.getElementById('filterPrice').value;
+  
+  const filteredCars = allCars.filter(car => {
+    const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, carCategory, status, createdAt] = car;
+    
+    // Search filter
+    const matchesSearch = title.toLowerCase().includes(searchTerm) || 
+                         description.toLowerCase().includes(searchTerm);
+    if (!matchesSearch) return false;
+    
+    // Category filter
+    if (category && carCategory !== category) return false;
+    
+    // Price filter
+    if (priceRange) {
+      const [min, max] = priceRange.split('-').map(Number);
+      if (Number(price) < min || Number(price) > max) return false;
+    }
+    
+    // Role-based visibility
+    if (status === 'ACTIVE' && (ownerRole === 'dealer' || ownerRole === 'admin')) {
+      return true;
+    }
+    
+    if (currentUser && ownerEmail === currentUser.email) {
+      return true;
+    }
+    
+    return false;
+  });
+  
+  displayCars(filteredCars);
+}
+
+function requestContact(carId, ownerEmail) {
+  if (!currentUser) {
+    alert('Please login to contact owner');
+    return;
+  }
+  
+  if (confirm('Do you want to view owner details for this car?\n\nThis request will be recorded for admin tracking.')) {
+    // First send request to admin (for tracking)
+    fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'requestOwnerContact',
+        carId: carId,
+        email: currentUser.email,
+        role: currentUser.role
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'sent_to_admin') {
+        // Now fetch owner details to show immediately
+        fetchOwnerDetails(carId, ownerEmail);
+      } else {
+        alert('❌ Error sending request');
+      }
+    })
+    .catch(err => {
+      console.error('Error sending request:', err);
+      // Still try to fetch owner details even if request fails
+      fetchOwnerDetails(carId, ownerEmail);
+    });
+  }
+}
+
+function fetchOwnerDetails(carId, ownerEmail) {
+  // Fetch owner details from backend
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getOwnerDetails',
+      ownerEmail: ownerEmail
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'ok') {
+      // Show owner details in a modal
+      showOwnerDetailsModal(data.owner, carId);
+    } else {
+      alert('❌ Could not fetch owner details. Please try again.');
+    }
+  })
+  .catch(err => {
+    console.error('Error fetching owner details:', err);
+    alert('❌ Error fetching owner details.');
+  });
+}
+
+function showOwnerDetailsModal(owner, carId) {
+  const modalId = 'ownerDetailsModal';
+  
+  // Check if modal already exists
+  let modal = document.getElementById(modalId);
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = modalId;
+    modal.className = 'modal hidden';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">
+            <i class="fas fa-user"></i> Owner Contact Details
+          </div>
+          <button class="close-modal" onclick="hideModal('${modalId}')">&times;</button>
+        </div>
+        <div id="ownerDetailsContent"></div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  
+  // Populate owner details
+  const ownerDetailsContent = document.getElementById('ownerDetailsContent');
+  ownerDetailsContent.innerHTML = `
+    <div style="padding: 1rem 0;">
+      <p style="color: #64748b; margin-bottom: 1.5rem;">
+        <i class="fas fa-info-circle"></i> You can now contact the owner directly using the details below:
+      </p>
+      
+      <div class="details-grid">
+        <div class="detail-item">
+          <h4><i class="fas fa-user"></i> Name</h4>
+          <p>${owner.name}</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-envelope"></i> Email</h4>
+          <p>${owner.email}</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-phone"></i> Phone</h4>
+          <p>${owner.phone}</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-map-marker-alt"></i> Address</h4>
+          <p>${owner.address}</p>
+        </div>
+        <div class="detail-item">
+          <h4><i class="fas fa-user-tag"></i> Role</h4>
+          <p>${owner.role}</p>
+        </div>
+      </div>
+      
+      <div class="card" style="margin: 2rem 0; background: #f0f9ff; border-color: #3b82f6;">
+        <h4 style="color: #1e40af; margin-bottom: 1rem;">
+          <i class="fas fa-lightbulb"></i> Contact Tips
+        </h4>
+        <ul style="color: #475569; line-height: 1.6; padding-left: 1.5rem;">
+          <li>Be respectful and professional when contacting the owner</li>
+          <li>Clearly mention the car ID: <strong>${carId}</strong></li>
+          <li>Discuss meeting in public places for safety</li>
+          <li>Verify car details before making any payments</li>
+        </ul>
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 2rem; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="composeEmail('${owner.email}', '${carId}')">
+          <i class="fas fa-envelope"></i> Send Email
+        </button>
+        ${owner.phone !== 'Not available' ? `
+          <button class="btn btn-success" onclick="callOwner('${owner.phone}')">
+            <i class="fas fa-phone"></i> Call Owner
+          </button>
+        ` : ''}
+        <button class="btn btn-secondary" onclick="hideModal('${modalId}')">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+  `;
+  
+  showModal(modalId);
+  
+  // Record this activity
+  recordActivity('contacted', carId, 'Contacted owner for car ' + carId);
+}
+
+function composeEmail(email, carId) {
+  const subject = `Car Inquiry - ${carId}`;
+  const body = `Hello,\n\nI am interested in the car with ID: ${carId}. Please provide more details.\n\nThank you.`;
+  window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+}
+
+function callOwner(phone) {
+  if (confirm(`Call ${phone}?`)) {
+    window.open(`tel:${phone}`);
+  }
+}
+
+function viewCarDetails(carId) {
+  currentViewingCarId = carId;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getCarDetails',
+      carId: carId,
+      email: currentUser.email,
+      role: currentUser.role
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.car) {
+      const car = data.car;
+      const details = data.details || [];
+      const images = car[7] ? JSON.parse(car[7]) : [];
+      const defaultImages = ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&h=400&fit=crop'];
+      
+      document.getElementById('carDetailTitle').innerHTML = `<i class="fas fa-car"></i> ${car[3]}`;
+      
+      const detailsContent = document.getElementById('carDetailsContent');
+      const displayImages = images.length > 0 ? images : defaultImages;
+      
+      const isOwnCar = currentUser && car[2] === currentUser.email;
+      const isActiveDealer = currentUser && currentUser.role === 'dealer' && currentUser.dealerActive === 'YES';
+      
+      let detailsHtml = `
+        <div class="car-details-images">
+          ${displayImages.map(img => `
+            <img src="${img}" onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&h=400&fit=crop'">
+          `).join('')}
+        </div>
+        
+        <div class="details-grid">
+          <div class="detail-item">
+            <h4><i class="fas fa-tag"></i> Price</h4>
+            <p>₹${Number(car[4]).toLocaleString()}</p>
+          </div>
+          ${isActiveDealer && car[5] && car[5] !== car[4] ? `
+            <div class="detail-item">
+              <h4><i class="fas fa-user-tie"></i> Dealer Price</h4>
+              <p style="color: #10b981; font-weight: 600;">₹${Number(car[5]).toLocaleString()}</p>
+            </div>
+          ` : ''}
+          <div class="detail-item">
+            <h4><i class="fas fa-folder"></i> Category</h4>
+            <p>${car[8] || 'Not specified'}</p>
+          </div>
+          <div class="detail-item">
+            <h4><i class="fas fa-user-tag"></i> Owner Type</h4>
+            <p>${car[1]}</p>
+          </div>
+        </div>
+        
+        <div class="card" style="margin: 2rem 0;">
+          <h4 style="color: #1e293b; margin-bottom: 1rem;">
+            <i class="fas fa-align-left"></i> Description
+          </h4>
+          <p style="color: #475569; line-height: 1.6;">${car[6]}</p>
+        </div>
+        
+        <p style="color: #64748b; margin: 1rem 0;">
+          <i class="fas fa-calendar"></i> Posted on: ${new Date(car[10]).toLocaleDateString()}
+        </p>
+      `;
+      
+      // Add extra details if available
+      if (details.length > 2) {
+        detailsHtml += `
+          <div class="card" style="margin: 2rem 0;">
+            <h4 style="color: #1e293b; margin-bottom: 1.5rem;">
+              <i class="fas fa-cogs"></i> Additional Details
+            </h4>
+            <div class="details-grid">
+              ${details[2] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-engine"></i> Engine</h4>
+                  <p>${details[2]}</p>
+                </div>
+              ` : ''}
+              ${details[3] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-tachometer-alt"></i> Mileage</h4>
+                  <p>${details[3]}</p>
+                </div>
+              ` : ''}
+              ${details[4] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-gas-pump"></i> Fuel Type</h4>
+                  <p>${details[4]}</p>
+                </div>
+              ` : ''}
+              ${details[5] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-cogs"></i> Transmission</h4>
+                  <p>${details[5]}</p>
+                </div>
+              ` : ''}
+              ${details[6] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-calendar"></i> Year</h4>
+                  <p>${details[6]}</p>
+                </div>
+              ` : ''}
+              ${details[7] ? `
+                <div class="detail-item">
+                  <h4><i class="fas fa-palette"></i> Color</h4>
+                  <p>${details[7]}</p>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+      
+      // Add action buttons
+      detailsHtml += `
+        <div style="display: flex; gap: 12px; margin-top: 2rem; flex-wrap: wrap;">
+          <button class="btn btn-info" onclick="viewCompleteCarDetails('${carId}')">
+            <i class="fas fa-info-circle"></i> Complete Details
+          </button>
+          ${isOwnCar ? `
+            <button class="btn btn-warning" onclick="editMyCar('${carId}')">
+              <i class="fas fa-edit"></i> Edit Car
+            </button>
+            <button class="btn btn-danger" onclick="deleteMyCar('${carId}')">
+              <i class="fas fa-trash"></i> Delete Car
+            </button>
+          ` : `
+            <button class="btn btn-primary" onclick="requestContact('${carId}', '${car[2]}')">
+              <i class="fas fa-phone"></i> Contact Owner
+            </button>
+          `}
+        </div>
+      `;
+      
+      detailsContent.innerHTML = detailsHtml;
+      showModal('carDetailsModal');
+      
+      // Record this view activity
+      recordActivity('viewed', carId, `Viewed car details: ${car[3]}`);
+    } else {
+      alert('❌ Error loading car details');
+    }
+  })
+  .catch(err => {
+    console.error('Error loading car details:', err);
+    alert('❌ Error loading car details: ' + err.message);
+  });
+}
+
+// NEW FUNCTION: View complete car details
+function viewCompleteCarDetails(carId) {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getCarCompleteDetails',
+      carId: carId
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.completeDetails) {
+      const details = data.completeDetails;
+      
+      let detailsHtml = `
+        <h4 style="color: #1e293b; margin-bottom: 1.5rem;">
+          <i class="fas fa-info-circle"></i> Complete Technical Specifications
+        </h4>
+        
+        <div class="details-grid">
+      `;
+      
+      // Add all fields dynamically
+      const fieldLabels = [
+        {index: 2, label: 'Engine CC', icon: 'fa-engine'},
+        {index: 3, label: 'Cylinders', icon: 'fa-cogs'},
+        {index: 4, label: 'Torque', icon: 'fa-bolt'},
+        {index: 5, label: 'Horsepower', icon: 'fa-horse'},
+        {index: 6, label: 'Top Speed', icon: 'fa-tachometer-alt'},
+        {index: 7, label: 'Variants', icon: 'fa-list'},
+        {index: 8, label: 'Fuel Models', icon: 'fa-gas-pump'},
+        {index: 9, label: 'Seats', icon: 'fa-chair'},
+        {index: 10, label: 'Airbags', icon: 'fa-shield-alt'},
+        {index: 11, label: 'NCAP Rating', icon: 'fa-star'},
+        {index: 12, label: 'Mileage', icon: 'fa-road'}
+      ];
+      
+      fieldLabels.forEach(field => {
+        if (details[field.index]) {
+          detailsHtml += `
+            <div class="detail-item">
+              <h4><i class="fas ${field.icon}"></i> ${field.label}</h4>
+              <p>${details[field.index]}</p>
+            </div>
+          `;
+        }
+      });
+      
+      detailsHtml += `</div>`;
+      
+      // Add pros and cons if available
+      if (details[13] || details[14]) {
+        detailsHtml += `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+        `;
+        
+        if (details[13]) {
+          detailsHtml += `
+            <div class="card" style="background: #f0f9ff; border-color: #10b981;">
+              <h4 style="color: #065f46; margin-bottom: 1rem;">
+                <i class="fas fa-plus-circle"></i> Pros
+              </h4>
+              <p style="color: #475569; line-height: 1.6;">${details[13]}</p>
+            </div>
+          `;
+        }
+        
+        if (details[14]) {
+          detailsHtml += `
+            <div class="card" style="background: #fef2f2; border-color: #ef4444;">
+              <h4 style="color: #991b1b; margin-bottom: 1rem;">
+                <i class="fas fa-minus-circle"></i> Cons
+              </h4>
+              <p style="color: #475569; line-height: 1.6;">${details[14]}</p>
+            </div>
+          `;
+        }
+        
+        detailsHtml += `</div>`;
+      }
+      
+      document.getElementById('completeDetailsContent').innerHTML = detailsHtml;
+      showModal('completeDetailsModal');
+    } else {
+      alert('No complete details available for this car yet.');
+    }
+  })
+  .catch(err => {
+    console.error('Error loading complete details:', err);
+    alert('❌ Error loading complete details');
+  });
+}
+
+function recordActivity(type, carId, action) {
+  // Store activity in localStorage for now
+  const activity = {
+    type: type,
+    carId: carId,
+    action: action,
+    date: new Date().toISOString()
+  };
+  
+  let activities = JSON.parse(localStorage.getItem('userActivities') || '[]');
+  activities.unshift(activity); // Add to beginning
+  if (activities.length > 50) activities = activities.slice(0, 50); // Keep only last 50
+  localStorage.setItem('userActivities', JSON.stringify(activities));
+}
+
+function addCarFromDashboard() {
+  if (!currentUser) return;
+  
+  const title = document.getElementById('dashboardCarTitle').value.trim();
+  const price = document.getElementById('dashboardCarPrice').value;
+  const description = document.getElementById('dashboardCarDesc').value.trim();
+  const images = document.getElementById('dashboardCarImages').value.trim();
+  const category = document.getElementById('dashboardCarCategory').value;
+  
+  if (!title || !price || !description || !category) {
+    showMessage('dashboardAddCarMessage', 'Please fill all required fields', 'error');
+    return;
+  }
+  
+  const imageArray = images ? images.split(',').map(img => img.trim()).filter(img => img) : [];
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'addCar',
+      role: currentUser.role,
+      email: currentUser.email,
+      title: title,
+      price: parseFloat(price),
+      description: description,
+      images: imageArray,
+      category: category
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'car_added') {
+      showMessage('dashboardAddCarMessage', '✅ Car added successfully!', 'success');
+      
+      // Clear form
+      document.getElementById('dashboardCarTitle').value = '';
+      document.getElementById('dashboardCarPrice').value = '';
+      document.getElementById('dashboardCarDesc').value = '';
+      document.getElementById('dashboardCarImages').value = '';
+      document.getElementById('dashboardCarCategory').value = '';
+      
+      // Reload data
+      loadMyCars();
+      loadCars();
+      loadFeaturedCars();
+      
+      // Record activity
+      recordActivity('added', 'new', `Added new car: ${title}`);
+      
+      setTimeout(() => {
+        showMessage('dashboardAddCarMessage', '', 'success');
+      }, 2000);
+    } else {
+      showMessage('dashboardAddCarMessage', '❌ Failed to add car: ' + (data.message || 'Unknown error'), 'error');
+    }
+  })
+  .catch(err => {
+    showMessage('dashboardAddCarMessage', '❌ Error adding car: ' + err.message, 'error');
+  });
+}
+
+function showAddCarModal() {
+  if (!currentUser) {
+    showModal('loginModal');
+    return;
+  }
+  
+  // If user is on dashboard, show dashboard add car section
+  if (document.getElementById('dashboard').classList.contains('active')) {
+    showDashboardSection('addCar');
+  } else {
+    // Show the actual modal
+    window.location.href = "#dashboard";
+    showPage('dashboard');
+    showDashboardSection('addCar');
+  }
+}
+
+/* ==================== DASHBOARD FUNCTIONS ==================== */
+function loadDashboardData() {
+  if (!currentUser) return;
+  
+  // Load profile
+  loadUserProfile();
+  
+  // Load user's cars
+  loadMyCars();
+  
+  // Set profile info
+  document.getElementById('dashboardUserName').textContent = currentUser.name || currentUser.email.split('@')[0];
+  document.getElementById('dashboardUserEmail').textContent = currentUser.email;
+  document.getElementById('dashboardUserRole').innerHTML = `<span class="user-badge ${currentUser.role}">${currentUser.role}</span>`;
+  document.getElementById('dashboardUserPhone').textContent = currentUser.phone || 'Not set';
+}
+
+function loadUserProfile() {
+  // In a real app, you would fetch this from backend
+  // For now, we'll use localStorage
+  if (currentUser.name) {
+    document.getElementById('dashboardName').value = currentUser.name;
+    document.getElementById('dashboardPhone').value = currentUser.phone;
+    document.getElementById('dashboardAddress').value = currentUser.address;
+  }
+}
+
+function updateDashboardProfile() {
+  const name = document.getElementById('dashboardName').value.trim();
+  const phone = document.getElementById('dashboardPhone').value.trim();
+  const address = document.getElementById('dashboardAddress').value.trim();
+  
+  if (!name || !phone || !address) {
+    showMessage('profileMessage', 'Please fill all fields', 'error');
+    return;
+  }
+  
+  // Update current user object
+  currentUser.name = name;
+  currentUser.phone = phone;
+  currentUser.address = address;
+  
+  // Save to localStorage
+  localStorage.setItem('carMarketUser', JSON.stringify(currentUser));
+  localStorage.setItem(`profile_${currentUser.email}_name`, name);
+  localStorage.setItem(`profile_${currentUser.email}_phone`, phone);
+  localStorage.setItem(`profile_${currentUser.email}_address`, address);
+  
+  // Update display
+  document.getElementById('dashboardUserName').textContent = name;
+  document.getElementById('dashboardUserPhone').textContent = phone;
+  
+  showMessage('profileMessage', '✅ Profile updated successfully!', 'success');
+  
+  // Also update backend if endpoint exists
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'updateProfile',
+      email: currentUser.email,
+      name: name,
+      phone: phone,
+      address: address
+    })
+  }).then(r => r.json());
+  
+  // Record activity
+  recordActivity('profile', 'update', 'Updated profile information');
+}
+
+function loadMyCars() {
+  if (!currentUser) return;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getCars' })
+  })
+  .then(response => response.json())
+  .then(cars => {
+    const myCars = cars.filter(car => car[2] === currentUser.email);
+    const container = document.getElementById('myCarsList');
+    
+    if (myCars.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🚗</div>
+          <h3>No Cars Listed</h3>
+          <p>You haven't listed any cars yet.</p>
+          <button class="btn btn-primary" onclick="showDashboardSection('addCar')">
+            <i class="fas fa-plus"></i> Add Your First Car
+          </button>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = '';
+    
+    myCars.forEach(car => {
+      const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+      
+      const images = imagesJson ? JSON.parse(imagesJson) : [];
+      const mainImage = images.length > 0 ? images[0] : 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop';
+      
+      const card = document.createElement('div');
+      card.className = 'car-card';
+      card.innerHTML = `
+        <span class="car-status ${status === 'ACTIVE' ? 'status-active' : status === 'SOLD' ? 'status-sold' : 'status-inactive'}">${status}</span>
+        <div class="car-image-container">
+          <img src="${mainImage}" alt="${title}" class="car-image" 
+               onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=300&fit=crop'">
+        </div>
+        <div class="car-content">
+          <h3 class="car-title">${title}</h3>
+          <p class="car-price"><i class="fas fa-tag"></i> ₹${Number(price).toLocaleString()}</p>
+          <div class="car-meta">
+            <span><i class="fas fa-folder"></i> ${category || 'No category'}</span>
+            <span><i class="fas fa-calendar"></i> ${new Date(createdAt).toLocaleDateString()}</span>
+          </div>
+          <div class="car-actions">
+            <button class="btn btn-primary btn-small" onclick="viewCarDetails('${id}')">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="btn btn-warning btn-small" onclick="editMyCar('${id}')">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn btn-danger btn-small" onclick="deleteMyCar('${id}')">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      `;
+      
+      container.appendChild(card);
+    });
+  })
+  .catch(err => {
+    console.error('Error loading my cars:', err);
+  });
+}
+
+function editMyCar(carId) {
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getCars' })
+  })
+  .then(response => response.json())
+  .then(cars => {
+    const car = cars.find(c => c[0] == carId);
+    if (car && car[2] === currentUser.email) {
+      const [id, ownerRole, ownerEmail, title, price, dealerPrice, description, imagesJson, category, status, createdAt] = car;
+      const images = imagesJson ? JSON.parse(imagesJson) : [];
+      
+      const editContent = document.getElementById('editCarContent');
+      editContent.innerHTML = `
+        <input type="hidden" id="editCarId" value="${id}">
+        
+        <div class="form-group">
+          <label><i class="fas fa-heading"></i> Car Title</label>
+          <input type="text" id="editCarTitle" class="form-control" value="${title}" placeholder="Car title">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-tag"></i> Price (₹)</label>
+          <input type="number" id="editCarPrice" class="form-control" value="${price}" placeholder="Price">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-align-left"></i> Description</label>
+          <textarea id="editCarDesc" class="form-control" rows="4" placeholder="Description">${description}</textarea>
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-image"></i> Image URLs (comma separated)</label>
+          <input type="text" id="editCarImages" class="form-control" 
+                 value="${images.join(', ')}" 
+                 placeholder="Image URLs">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-folder"></i> Category</label>
+          <select id="editCarCategory" class="form-control">
+            <option value="">Select Category</option>
+            <option value="SUV" ${category === 'SUV' ? 'selected' : ''}>🚙 SUV</option>
+            <option value="Sedan" ${category === 'Sedan' ? 'selected' : ''}>🚗 Sedan</option>
+            <option value="Hatchback" ${category === 'Hatchback' ? 'selected' : ''}>🚘 Hatchback</option>
+            <option value="Luxury" ${category === 'Luxury' ? 'selected' : ''}>🏎️ Luxury</option>
+            <option value="Sports" ${category === 'Sports' ? 'selected' : ''}>⚡ Sports</option>
+            <option value="Electric" ${category === 'Electric' ? 'selected' : ''}>🔋 Electric</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-info-circle"></i> Status</label>
+          <select id="editCarStatus" class="form-control">
+            <option value="ACTIVE" ${status === 'ACTIVE' ? 'selected' : ''}>Active</option>
+            <option value="INACTIVE" ${status === 'INACTIVE' ? 'selected' : ''}>Inactive</option>
+            <option value="SOLD" ${status === 'SOLD' ? 'selected' : ''}>Sold</option>
+          </select>
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button class="btn btn-primary" onclick="updateMyCar()">
+            <i class="fas fa-save"></i> Update Car
+          </button>
+          <button class="btn btn-secondary" onclick="hideModal('editCarModal')">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+      `;
+      
+      showModal('editCarModal');
+    }
+  })
+  .catch(err => {
+    console.error('Error loading car for edit:', err);
+  });
+}
+
+function updateMyCar() {
+  const carId = document.getElementById('editCarId').value;
+  const title = document.getElementById('editCarTitle').value.trim();
+  const price = document.getElementById('editCarPrice').value;
+  const description = document.getElementById('editCarDesc').value.trim();
+  const images = document.getElementById('editCarImages').value.trim();
+  const category = document.getElementById('editCarCategory').value;
+  const status = document.getElementById('editCarStatus').value;
+  
+  if (!title || !price || !description || !category || !status) {
+    alert('❌ Please fill all fields');
+    return;
+  }
+  
+  const imageArray = images ? images.split(',').map(img => img.trim()).filter(img => img) : [];
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'updateCar',
+      carId: carId,
+      title: title,
+      price: parseFloat(price),
+      description: description,
+      images: imageArray,
+      category: category,
+      status: status // Send status
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'updated') {
+      alert('✅ Car updated successfully!');
+      hideModal('editCarModal');
+      hideModal('carDetailsModal');
+      loadMyCars();
+      loadCars();
+      loadFeaturedCars();
+      
+      // Record activity
+      recordActivity('updated', carId, `Updated car: ${title}`);
+    } else {
+      alert('❌ Failed to update car: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => {
+    alert('❌ Error updating car: ' + err.message);
+  });
+}
+
+function deleteMyCar(carId) {
+  if (!confirm('Are you sure you want to delete this car? This action cannot be undone.')) return;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'deleteCar',
+      carId: carId
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'deleted') {
+      alert('✅ Car deleted successfully');
+      hideModal('carDetailsModal');
+      loadMyCars();
+      loadCars();
+      loadFeaturedCars();
+      
+      // Record activity
+      recordActivity('deleted', carId, 'Deleted a car listing');
+    } else {
+      alert('❌ Failed to delete car: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => {
+    alert('❌ Error deleting car: ' + err.message);
+  });
+}
+
+function loadMyRequests() {
+  if (!currentUser) return;
+  
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'getContactRequests',
+      email: currentUser.email
+    })
+  })
+  .then(response => response.json())
+  .then(requests => {
+    const container = document.getElementById('myRequestsList');
+    
+    if (!requests || requests.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📨</div>
+          <h3>No Contact Requests</h3>
+          <p>You haven't made any contact requests yet.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    let html = '<div class="card">';
+    requests.forEach(request => {
+      const [carId, requesterEmail, requesterRole, date] = request;
+      
+      html += `
+        <div style="border-bottom: 1px solid #e2e8f0; padding: 1.5rem 0;">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+            <div>
+              <p style="font-weight: 700; color: #1e293b; margin-bottom: 5px;">
+                <i class="fas fa-car"></i> Car ID: ${carId}
+              </p>
+              <p style="color: #475569;">
+                <i class="fas fa-user"></i> Requester: ${requesterEmail}
+                <span style="margin-left: 10px;"><i class="fas fa-user-tag"></i> ${requesterRole}</span>
+              </p>
+            </div>
+            <span class="user-badge" style="background: #10b981; font-size: 0.8rem;">Request Sent</span>
+          </div>
+          <p style="color: #64748b; font-size: 0.9rem;">
+            <i class="fas fa-clock"></i> ${new Date(date).toLocaleString()}
+          </p>
+        </div>
+      `;
+    });
+    html += '</div>';
+    
+    container.innerHTML = html;
+  })
+  .catch(err => {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📨</div>
+        <h3>Error Loading Requests</h3>
+        <p>${err.message}</p>
+      </div>
+    `;
+  });
+}
+
+/* ==================== UTILITY FUNCTIONS ==================== */
+function showUserType(type) {
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(tab => tab.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  const content = document.getElementById('userTypeContent');
+  
+  switch(type) {
+    case 'user':
+      content.innerHTML = `
+        <h3 style="color: #1e293b; margin-bottom: 1rem;">
+          <i class="fas fa-user"></i> For Regular Users
+        </h3>
+        <ul style="color: #475569; line-height: 1.8; padding-left: 1.5rem;">
+          <li>Browse and search cars with advanced filters</li>
+          <li>View detailed car specifications</li>
+          <li>Add your own cars for sale</li>
+          <li>Manage all your listings in one dashboard</li>
+          <li>Contact sellers through secure system</li>
+          <li><strong>Instant owner details access</strong></li>
+        </ul>
+      `;
+      break;
+      
+    case 'dealer':
+      content.innerHTML = `
+        <h3 style="color: #1e293b; margin-bottom: 1rem;">
+          <i class="fas fa-store"></i> For Car Dealers
+        </h3>
+        <ul style="color: #475569; line-height: 1.8; padding-left: 1.5rem;">
+          <li><strong>All user features PLUS:</strong></li>
+          <li>Special dealer pricing (10% discount)</li>
+          <li>Request owner contact details</li>
+          <li>Add cars visible to all users</li>
+          <li>Participate in live auctions</li>
+          <li>Priority customer support</li>
+          <li><strong style="color: #10b981;">One-time activation fee: ₹2,000</strong></li>
+        </ul>
+      `;
+      break;
+      
+    case 'admin':
+      content.innerHTML = `
+        <h3 style="color: #1e293b; margin-bottom: 1rem;">
+          <i class="fas fa-crown"></i> For Administrators
+        </h3>
+        <ul style="color: #475569; line-height: 1.8; padding-left: 1.5rem;">
+          <li><strong>All dealer features PLUS:</strong></li>
+          <li>Manage all users and cars</li>
+          <li>View all car view activities</li>
+          <li>Start and manage auctions</li>
+          <li>Add detailed car specifications</li>
+          <li>Process contact requests</li>
+          <li>Set user roles (User/Dealer/Admin)</li>
+          <li>Delete or edit any car listing</li>
+        </ul>
+      `;
+      break;
+  }
+}
+</script>
+</body>
+</html>
