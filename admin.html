@@ -7,729 +7,1701 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-/* ==================== COMMON STYLES ==================== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  background: #f8fafc;
-  color: #334155;
-  min-height: 100vh;
-}
-
-/* Header */
-header {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-  padding: 1rem 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 1.8rem;
-  font-weight: 700;
-}
-
-.logo i {
-  font-size: 2rem;
-  color: #fca5a5;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.user-badge {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-}
-
-/* Navigation */
-nav {
-  background: white;
-  padding: 1rem 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.nav-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.nav-btn {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 10px;
-  background: #f1f5f9;
-  color: #475569;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.nav-btn:hover {
-  background: #ef4444;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
-
-.nav-btn.active {
-  background: #ef4444;
-  color: white;
-}
-
-/* Main Container */
-.container {
-  max-width: 1280px;
-  margin: 2rem auto;
-  padding: 0 2rem;
-}
-
-/* Pages */
-.page {
-  display: none;
-  animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.page.active {
-  display: block;
-}
-
-/* Cards */
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
-}
-
-.card-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Car Grid */
-.cars-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.car-card {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
-  position: relative;
-}
-
-.car-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
-  border-color: #ef4444;
-}
-
-.car-image-container {
-  width: 100%;
-  height: 220px;
-  overflow: hidden;
-  background: #f1f5f9;
-}
-
-.car-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.car-card:hover .car-image {
-  transform: scale(1.05);
-}
-
-.car-content {
-  padding: 1.5rem;
-}
-
-.car-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 0.75rem;
-  line-height: 1.3;
-}
-
-.car-price {
-  color: #10b981;
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.car-dealer-price {
-  color: #3b82f6;
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-top: 5px;
-}
-
-.car-meta {
-  display: flex;
-  justify-content: space-between;
-  color: #64748b;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-}
-
-.car-meta span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.car-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 1.5rem;
-  flex-wrap: wrap;
-}
-
-/* Status Badges */
-.car-status {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  padding: 6px 15px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  z-index: 2;
-}
-
-.status-active {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-}
-
-.status-inactive {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-}
-
-.status-sold {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-}
-
-/* Buttons */
-.btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4);
-}
-
-.btn-secondary {
-  background: linear-gradient(135deg, #64748b, #475569);
-  color: white;
-}
-
-.btn-success {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-}
-
-.btn-warning {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-}
-
-.btn-info {
-  background: linear-gradient(135deg, #0ea5e9, #0284c7);
-  color: white;
-}
-
-.btn-small {
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  border-radius: 8px;
-}
-
-.btn-block {
-  width: 100%;
-}
-
-/* Forms */
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #334155;
-  font-size: 0.95rem;
-}
-
-.form-control {
-  width: 100%;
-  padding: 14px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  font-size: 1rem;
-  transition: all 0.3s;
-  background: white;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-}
-
-textarea.form-control {
-  min-height: 120px;
-  resize: vertical;
-}
-
-/* Modal */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 20px;
-  backdrop-filter: blur(5px);
-}
-
-.modal.hidden {
-  display: none;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 20px;
-  padding: 2.5rem;
-  width: 100%;
-  max-width: 900px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #f1f5f9;
-}
-
-.modal-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #1e293b;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.close-modal {
-  background: #f1f5f9;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 1.5rem;
-  color: #64748b;
-  transition: all 0.3s;
-}
-
-.close-modal:hover {
-  background: #ef4444;
-  color: white;
-  transform: rotate(90deg);
-}
-
-/* Dashboard */
-.dashboard {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.dashboard-content {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
-}
-
-/* Admin Specific Styles */
-.admin-stat-card {
-  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-  padding: 2rem;
-  border-radius: 16px;
-  text-align: center;
-  border: 1px solid #e2e8f0;
-  transition: transform 0.3s;
-}
-
-.admin-stat-card:hover {
-  transform: translateY(-5px);
-}
-
-.admin-stat-card h4 {
-  color: #64748b;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 1rem;
-}
-
-.admin-stat-card .stat {
-  font-size: 2.5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.admin-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-}
-
-/* Data Table */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.data-table th {
-  background: #f1f5f9;
-  padding: 15px;
-  text-align: left;
-  color: #64748b;
-  font-weight: 600;
-  border-bottom: 2px solid #e2e8f0;
-}
-
-.data-table td {
-  padding: 15px;
-  border-bottom: 1px solid #e2e8f0;
-  color: #475569;
-}
-
-.data-table tr:hover {
-  background: #f8fafc;
-}
-
-/* Tabs */
-.tabs {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.tab {
-  padding: 12px 24px;
-  background: #f1f5f9;
-  border: none;
-  border-radius: 10px 10px 0 0;
-  cursor: pointer;
-  font-weight: 600;
-  color: #64748b;
-  transition: all 0.3s;
-}
-
-.tab:hover {
-  background: #e2e8f0;
-  color: #334155;
-}
-
-.tab.active {
-  background: #ef4444;
-  color: white;
-}
-
-/* Car Details */
-.car-details-images {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.car-details-images img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.detail-item {
-  background: #f8fafc;
-  padding: 1.5rem;
-  border-radius: 12px;
-  border-left: 4px solid #ef4444;
-}
-
-.detail-item h4 {
-  color: #64748b;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 0.5rem;
-}
-
-.detail-item p {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-/* Complete Details Grid */
-.complete-details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.complete-detail-item {
-  background: white;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-}
-
-.complete-detail-item h5 {
-  color: #475569;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-}
-
-.complete-detail-item p {
-  color: #1e293b;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-/* Empty States */
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: #94a3b8;
-}
-
-.empty-state-icon {
-  font-size: 4rem;
-  margin-bottom: 1.5rem;
-  opacity: 0.5;
-}
-
-.empty-state h3 {
-  color: #64748b;
-  margin-bottom: 1rem;
-}
-
-/* Messages */
-.message {
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  margin: 1.5rem 0;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.message.success {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-
-.message.error {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
-}
-
-.message.info {
-  background: #dbeafe;
-  color: #1e40af;
-  border: 1px solid #bfdbfe;
-}
-
-/* Search & Filter */
-.search-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
+  /* ==================== COMMON STYLES ==================== */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    color: #334155;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  
+  /* Header */
+  header {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    padding: 1rem 0;
+    box-shadow: 0 6px 25px rgba(239, 68, 68, 0.25);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  
+  .header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+  }
+  
+  .logo:hover {
+    transform: translateY(-2px);
+  }
+  
+  .logo i {
+    font-size: 2.2rem;
+    color: #fca5a5;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  
+  .user-badge {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Navigation */
+  nav {
+    background: white;
+    padding: 1rem 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 76px;
+    z-index: 99;
+  }
+  
+  .nav-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  
+  .nav-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  .nav-btn:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+  
+  .nav-btn:hover {
+    background: #ef4444;
+    color: white;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+  }
+  
+  .nav-btn.active {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+  }
+  
+  /* Main Container */
+  .container {
+    max-width: 1400px;
+    margin: 2.5rem auto;
+    padding: 0 2rem;
+  }
+  
+  /* Pages */
+  .page {
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+  
+  .page.active {
+    display: block;
+  }
+  
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: -0.5px;
+  }
+  
+  /* Car Grid */
+  .cars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .car-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid #e2e8f0;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .car-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    border-color: #ef4444;
+  }
+  
+  .car-image-container {
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    position: relative;
+  }
+  
+  .car-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .car-card:hover .car-image {
+    transform: scale(1.1);
+  }
+  
+  .car-content {
+    padding: 1.75rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .car-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+  }
+  
+  .car-price {
+    color: #10b981;
+    font-size: 1.7rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.5px;
+  }
+  
+  .car-dealer-price {
+    color: #3b82f6;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 5px;
+  }
+  
+  .car-meta {
+    display: flex;
+    justify-content: space-between;
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .car-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  
+  .car-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    flex-wrap: wrap;
+  }
+  
+  /* Status Badges */
+  .car-status {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    z-index: 2;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-transform: uppercase;
+  }
+  
+  .status-active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+  }
+  
+  .status-inactive {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+  }
+  
+  .status-sold {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+  }
+  
+  .status-auction {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+  }
+  
+  /* Buttons */
+  .btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.3px;
+  }
+  
+  .btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+  }
+  
+  .btn:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(20, 20);
+      opacity: 0;
+    }
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+  }
+  
+  .btn-secondary {
+    background: linear-gradient(135deg, #64748b, #475569);
+    color: white;
+  }
+  
+  .btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+  }
+  
+  .btn-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+  }
+  
+  .btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+  }
+  
+  .btn-info {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    color: white;
+  }
+  
+  .btn-purple {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+  }
+  
+  .btn-small {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+  
+  .btn-block {
+    width: 100%;
+  }
+  
+  /* Forms */
+  .form-group {
+    margin-bottom: 1.75rem;
+    position: relative;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+    color: #334155;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    transition: all 0.3s;
+    background: white;
+    font-family: inherit;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: #ef4444;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    transform: translateY(-1px);
+  }
+  
+  textarea.form-control {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+  
+  /* Modal */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    animation: modalFadeIn 0.3s ease;
+  }
+  
+  @keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .modal.hidden {
+    display: none;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 24px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 900px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 35px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  @keyframes modalSlideIn {
+    from { 
+      opacity: 0; 
+      transform: translateY(-40px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 2px solid #f1f5f9;
+  }
+  
+  .modal-title {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: -0.5px;
+  }
+  
+  .close-modal {
+    background: #f1f5f9;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.8rem;
+    color: #64748b;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  }
+  
+  .close-modal:hover {
+    background: #ef4444;
+    color: white;
+    transform: rotate(90deg) scale(1.1);
+  }
+  
+  /* Dashboard */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2.5rem;
+    margin-top: 2rem;
+  }
+  
+  .dashboard-sidebar {
+    background: white;
+    border-radius: 20px;
+    padding: 1.75rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    height: fit-content;
+    position: sticky;
+    top: 165px;
+  }
+  
+  .sidebar-menu {
+    list-style: none;
+  }
+  
+  .sidebar-menu li {
+    margin-bottom: 0.75rem;
+  }
+  
+  .sidebar-menu button {
+    width: 100%;
+    text-align: left;
+    padding: 16px 24px;
+    border: none;
+    background: none;
+    color: #64748b;
+    cursor: pointer;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .sidebar-menu button::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: #ef4444;
+    transition: width 0.4s ease;
+  }
+  
+  .sidebar-menu button:hover {
+    background: #f8fafc;
+    color: #1e293b;
+    padding-left: 28px;
+  }
+  
+  .sidebar-menu button:hover::before {
+    width: 5px;
+  }
+  
+  .sidebar-menu button.active {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+  }
+  
+  .sidebar-menu button.active::before {
+    display: none;
+  }
+  
+  .dashboard-content {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    min-height: 600px;
+  }
+  
+  .dashboard-section {
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  .dashboard-section.active {
+    display: block;
+  }
+  
+  /* Car Details */
+  .car-details-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .car-details-images img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+    cursor: pointer;
+  }
+  
+  .car-details-images img:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  }
+  
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .detail-item {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 1.75rem;
+    border-radius: 16px;
+    border-left: 5px solid #ef4444;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    transition: all 0.4s ease;
+  }
+  
+  .detail-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .detail-item h4 {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .detail-item p {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.4;
+  }
+  
+  /* Search & Filter */
   .search-container {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1.75rem 0;
+  }
+  
+  /* Messages */
+  .message {
+    padding: 1.25rem 1.75rem;
+    border-radius: 16px;
+    margin: 1.75rem 0;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideIn 0.3s ease;
+  }
+  
+  @keyframes slideIn {
+    from { 
+      opacity: 0; 
+      transform: translateX(-20px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateX(0); 
+    }
+  }
+  
+  .message.success {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+    border: 1px solid #10b981;
+  }
+  
+  .message.error {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    color: #991b1b;
+    border: 1px solid #ef4444;
+  }
+  
+  .message.info {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1e40af;
+    border: 1px solid #3b82f6;
+  }
+  
+  .message.warning {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    border: 1px solid #f59e0b;
+  }
+  
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+  
+  .tab {
+    padding: 12px 28px;
+    background: #f8fafc;
+    border: none;
+    border-radius: 12px 12px 0 0;
+    cursor: pointer;
+    font-weight: 700;
+    color: #64748b;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .tab:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+    transform: translateY(-2px);
+  }
+  
+  .tab.active {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 -4px 15px rgba(239, 68, 68, 0.3);
+  }
+  
+  /* Empty States */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #94a3b8;
+  }
+  
+  .empty-state-icon {
+    font-size: 5rem;
+    margin-bottom: 2rem;
+    opacity: 0.5;
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+  
+  .empty-state h3 {
+    color: #64748b;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+  }
+  
+  /* Admin Stats */
+  .admin-stat-card {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    padding: 2.5rem;
+    border-radius: 20px;
+    text-align: center;
+    border: 2px solid #fecaca;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  }
+  
+  .admin-stat-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 20px 40px rgba(239, 68, 68, 0.15);
+  }
+  
+  .admin-stat-card h4 {
+    color: #991b1b;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .admin-stat-card .stat {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin: 0.5rem 0;
   }
   
   .admin-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  /* Data Table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .data-table th {
+    background: #f1f5f9;
+    padding: 15px;
+    text-align: left;
+    color: #64748b;
+    font-weight: 600;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  
+  .data-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #475569;
+  }
+  
+  .data-table tr:hover {
+    background: #f8fafc;
+  }
+  
+  /* Complete Details Grid */
+  .complete-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .complete-detail-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+  
+  .complete-detail-item h5 {
+    color: #475569;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+  
+  .complete-detail-item p {
+    color: #1e293b;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  /* Auction Cards */
+  .auction-card {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 3px solid #f59e0b;
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    overflow: hidden;
+  }
+  
+  .auction-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(245, 158, 11, 0.2);
+  }
+  
+  .auction-card::before {
+    content: "🔥 LIVE AUCTION";
+    position: absolute;
+    top: -12px;
+    right: 25px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+  
+  .auction-timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 16px;
+    border: 2px solid #fde68a;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .auction-timer::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+  }
+  
+  .auction-timer i {
+    color: #f59e0b;
+    font-size: 2rem;
+  }
+  
+  .auction-timer span {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #92400e;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+  }
+  
+  .timer-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 600;
+    display: block;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  /* ==================== MOBILE MENU ==================== */
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #475569;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    z-index: 100;
+  }
+  
+  .menu-toggle:hover {
+    background: #f1f5f9;
+  }
+  
+  .nav-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  
+  /* Mobile Responsive */
+  @media (max-width: 1200px) {
+    .dashboard {
+      grid-template-columns: 1fr;
+    }
+    
+    .dashboard-sidebar {
+      position: static;
+      margin-bottom: 1.5rem;
+    }
+    
+    .search-container {
+      grid-template-columns: 1fr 1fr;
+    }
+    
+    .admin-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .cars-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+    
+    .modal-content {
+      padding: 2rem;
+    }
+    
+    .card-title {
+      font-size: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 1.5rem;
+      margin: 1.5rem auto;
+    }
+    
+    .header-content {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+      padding: 1rem;
+    }
+    
+    .user-info {
+      justify-content: center;
+    }
+    
+    .nav-content {
+      justify-content: center;
+      padding: 0 1rem;
+    }
+    
+    .cars-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+      padding: 1.5rem;
+      margin: 10px;
+    }
+    
+    .car-actions {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .details-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .tabs {
+      flex-direction: column;
+    }
+    
+    .tab {
+      border-radius: 12px;
+    }
+    
+    .search-container {
+      grid-template-columns: 1fr;
+    }
+    
+    .dashboard-content {
+      padding: 1.75rem;
+    }
+    
+    /* Mobile Menu Styles */
+    .menu-toggle {
+      display: block;
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .nav-content {
+      position: relative;
+      justify-content: center;
+      padding: 0 1rem 0 3.5rem;
+    }
+    
+    .nav-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
+      gap: 8px;
+      padding-top: 1rem;
+      animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .nav-buttons.active {
+      display: grid;
+    }
+    
+    .nav-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    
+    /* Ensure exactly 3 buttons in a row */
+    .nav-buttons .nav-btn:nth-child(3n+1):nth-last-child(-n+3),
+    .nav-buttons .nav-btn:nth-child(3n+1):nth-last-child(-n+3) ~ .nav-btn {
+      grid-column: span 1;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .logo {
+      font-size: 1.5rem;
+    }
+    
+    .logo i {
+      font-size: 1.8rem;
+    }
+    
+    .user-badge {
+      font-size: 0.75rem;
+      padding: 5px 12px;
+    }
+    
+    .btn {
+      padding: 12px 20px;
+      font-size: 0.95rem;
+    }
+    
+    .card-title {
+      font-size: 1.3rem;
+    }
+    
+    .car-title {
+      font-size: 1.2rem;
+    }
+    
+    .car-price {
+      font-size: 1.4rem;
+    }
+    
+    .modal-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+    
+    .auction-timer span {
+      font-size: 2rem;
+    }
+    
+    .admin-stat-card .stat {
+      font-size: 2.5rem;
+    }
+    
+    /* Mobile menu adjustments */
+    .nav-buttons {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    
+    .nav-btn {
+      padding: 10px 12px;
+      font-size: 0.85rem;
+    }
+    
+    .nav-btn i {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .nav-content {
+      padding: 0 1rem 0 3rem;
+    }
+    
+    .menu-toggle {
+      left: 0.5rem;
+    }
+    
+    .car-meta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .car-price {
+      font-size: 1.2rem;
+    }
+    
+    .auction-card {
+      padding: 1.5rem;
+    }
+    
+    /* Mobile menu for very small screens */
+    .nav-buttons {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+    
+    .nav-btn {
+      padding: 8px 10px;
+      font-size: 0.8rem;
+    }
+    
+    .nav-btn i {
+      display: none; /* Hide icons on very small screens */
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .auction-card p[style*="font-size: 1.8rem"] {
+      font-size: 1.1rem !important;
+    }
+    
+    .auction-card > div > div > div p:first-child {
+      font-size: 0.8rem !important;
+    }
+    
+    /* Ensure exactly 3 buttons even on very small screens */
+    .nav-buttons {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .nav-btn {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 8px;
+    }
+  }
+  
+  /* Print Styles */
+  @media print {
+    .modal,
+    .nav-btn[onclick*="logout"],
+    .btn-danger,
+    .btn-warning {
+      display: none !important;
+    }
+    
+    .card {
+      break-inside: avoid;
+      box-shadow: none;
+      border: 1px solid #ddd;
+    }
+  }
+
+  /* ==================== AUCTION CARD FIXES ==================== */
+
+  /* Fix for auction timer text cutoff */
+  .auction-timer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px; /* Reduced gap */
+      margin: 1.5rem 0;
+      padding: 1rem; /* Reduced padding */
+      background: white;
+      border-radius: 16px;
+      border: 2px solid #fde68a;
+      position: relative;
+      overflow: hidden;
+      flex-wrap: wrap; /* Allow wrapping on small screens */
+  }
+
+  .auction-timer span {
+      font-size: 1.8rem; /* Reduced from 2.5rem */
+      font-weight: 900;
+      color: #92400e;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 1px; /* Reduced from 2px */
+      word-break: keep-all; /* Prevent breaking time format */
+      white-space: nowrap; /* Keep time on one line */
+  }
+
+  .auction-timer i {
+      color: #f59e0b;
+      font-size: 1.5rem; /* Reduced from 2rem */
+  }
+
+  /* Fix for bid amount overflow */
+  .auction-card .btn-warning {
+      white-space: normal; /* Allow text to wrap */
+      word-break: break-word; /* Break long words */
+      padding: 14px 16px; /* Adjust padding */
+      font-size: 1rem; /* Ensure consistent font size */
+      min-height: 52px; /* Ensure button has enough height */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+  }
+
+  /* Additional mobile fixes for auctions */
+  @media (max-width: 768px) {
+      .auction-timer span {
+          font-size: 1.5rem; /* Even smaller on mobile */
+      }
+      
+      .auction-timer {
+          gap: 8px;
+          padding: 0.75rem;
+      }
+      
+      .auction-card > div > div {
+          grid-template-columns: 1fr; /* Stack on mobile */
+          gap: 0.5rem;
+      }
+      
+      .auction-card .btn-warning {
+          font-size: 0.95rem;
+          padding: 12px;
+          min-height: 48px;
+      }
+      
+      .auction-card p[style*="font-size: 1.8rem"] {
+          font-size: 1.3rem !important;
+      }
+      
+      .auction-card::before {
+          right: 15px; /* Adjust position */
+          font-size: 0.7rem; /* Smaller font */
+          padding: 4px 12px;
+      }
+  }
+
+  @media (max-width: 480px) {
+      .auction-timer span {
+          font-size: 1.2rem; /* Very small screens */
+          letter-spacing: 0.5px;
+      }
+      
+      .auction-timer {
+          flex-direction: column; /* Stack vertically */
+          gap: 5px;
+          padding: 0.5rem;
+      }
+      
+      .timer-label {
+          font-size: 0.75rem;
+      }
+      
+      .auction-card {
+          padding: 1.25rem; /* Reduce padding further */
+      }
+      
+      .auction-card > div > h3 {
+          font-size: 1.3rem; /* Reduce title size */
+      }
+  }
+
+  /* ==================== MOBILE MENU FIXES ==================== */
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  z-index: 100;
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Show menu toggle only on mobile */
+@media (max-width: 768px) {
+  .menu-toggle {
+      display: block;
+  }
+  
+  .nav-buttons {
+      display: none; /* Hide by default on mobile */
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
+      gap: 8px;
+      padding-top: 1rem;
+      animation: slideDown 0.3s ease;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 0 0 12px 12px;
+      z-index: 99;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      border: 1px solid #e2e8f0;
+  }
+  
+  .nav-buttons.active {
+      display: grid; /* Show when active */
+  }
+  
+  .nav-content {
+      position: relative;
+      justify-content: center;
+      padding: 0 1rem 0 3.5rem;
+      min-height: 60px;
+  }
+  
+  .nav-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+  }
+  
+  @keyframes slideDown {
+      from { 
+          opacity: 0; 
+          transform: translateY(-10px); 
+      }
+      to { 
+          opacity: 1; 
+          transform: translateY(0); 
+      }
+  }
+}
+
+@media (max-width: 576px) {
+  .nav-buttons {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 0.75rem;
+  }
+  
+  .nav-btn {
+      padding: 10px 12px;
+      font-size: 0.85rem;
+  }
+  
+  .nav-btn i {
+      display: inline-block; /* Keep icons visible */
+      margin-right: 4px;
+  }
+}
+
+@media (max-width: 400px) {
+  .nav-buttons {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+  }
+  
+  .nav-btn {
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      min-height: 44px;
+  }
+  
+  .nav-btn i {
+      font-size: 0.9rem;
+      margin-right: 3px;
+  }
+}
+
+/* ==================== DASHBOARD CARD FIXES ==================== */
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.admin-stat-card {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  padding: 2rem; /* Reduced padding */
+  border-radius: 20px;
+  text-align: center;
+  border: 2px solid #fecaca;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.admin-stat-card h4 {
+  color: #991b1b;
+  font-size: 0.95rem; /* Slightly smaller font */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 10px; /* Add padding to prevent text cutoff */
+  line-height: 1.3; /* Better line height */
+  word-wrap: break-word; /* Allow text to wrap */
+  overflow-wrap: break-word; /* Handle long words */
+}
+
+.admin-stat-card .stat {
+  font-size: 2.5rem; /* Reduced from 3rem */
+  font-weight: 900;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin: 0.5rem 0;
+  padding: 0 10px;
+  word-break: break-all; /* Handle long numbers */
+}
+
+/* Responsive adjustments for dashboard */
+@media (max-width: 1200px) {
+  .admin-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+  }
+  
+  .admin-stat-card {
+      padding: 1.75rem;
+  }
+  
+  .admin-stat-card .stat {
+      font-size: 2.2rem;
   }
 }
 
 @media (max-width: 768px) {
-  .container {
-    padding: 0 1rem;
+  .admin-grid {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet */
+      gap: 1rem;
   }
   
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+  .admin-stat-card {
+      padding: 1.5rem;
+      min-height: 160px;
   }
   
-  .nav-content {
-    justify-content: center;
+  .admin-stat-card h4 {
+      font-size: 0.85rem;
+      letter-spacing: 0.8px;
   }
   
-  .cars-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .modal-content {
-    padding: 1.5rem;
-    margin: 10px;
-  }
-  
-  .car-actions {
-    flex-direction: column;
-  }
-  
-  .data-table {
-    display: block;
-    overflow-x: auto;
-  }
-  
-  .complete-details-grid {
-    grid-template-columns: 1fr;
+  .admin-stat-card .stat {
+      font-size: 2rem;
   }
 }
+
+@media (max-width: 576px) {
+  .admin-grid {
+      grid-template-columns: 1fr; /* 1 column on mobile */
+      gap: 0.75rem;
+  }
+  
+  .admin-stat-card {
+      padding: 1.25rem;
+      min-height: 140px;
+  }
+  
+  .admin-stat-card h4 {
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      flex-wrap: wrap;
+  }
+  
+  .admin-stat-card .stat {
+      font-size: 1.8rem;
+  }
+}
+
+/* Fix for specific card titles */
+.admin-stat-card:nth-child(5) h4 { /* This targets the "TOTAL CARS WORTH" card */
+  white-space: normal; /* Allow text to wrap to multiple lines */
+  min-height: 2.5em; /* Ensure enough height for two lines */
+}
+
+/* Alternative: Make all card titles wrap */
+.admin-stat-card h4 {
+  white-space: normal;
+  min-height: 2.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.menu-toggle i {
+  color: #ef4444; /* always red */
+  transition: color 0.2s; /* optional smooth transition */
+}
+
+
 </style>
 </head>
 <body>
@@ -752,30 +1724,37 @@ textarea.form-control {
 
 <nav>
   <div class="nav-content">
-    <button class="nav-btn active" onclick="showPage('dashboard')">
-      <i class="fas fa-tachometer-alt"></i> Dashboard
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle" onclick="toggleMobileMenu()">
+      <i class="fas fa-bars"></i>
     </button>
-    <button class="nav-btn" onclick="showPage('users')">
-      <i class="fas fa-users"></i> Users
-    </button>
-    <button class="nav-btn" onclick="showPage('cars')">
-      <i class="fas fa-car"></i> Cars
-    </button>
-    <button class="nav-btn" onclick="showAddCarModal()">
-      <i class="fas fa-plus-circle"></i> Add Car
-    </button>
-    <button class="nav-btn" onclick="showPage('requests')">
-      <i class="fas fa-envelope"></i> Requests
-    </button>
-    <button class="nav-btn" onclick="showPage('views')">
-      <i class="fas fa-eye"></i> Views
-    </button>
-    <button class="nav-btn" onclick="showPage('auctions')">
-      <i class="fas fa-gavel"></i> Auctions
-    </button>
-    <button class="nav-btn" onclick="showPage('reports')">
-      <i class="fas fa-chart-bar"></i> Reports
-    </button>
+    
+    <div class="nav-buttons" id="navButtons">
+      <button class="nav-btn active" onclick="showPage('dashboard'); closeMobileMenu()">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+      </button>
+      <button class="nav-btn" onclick="showPage('users'); closeMobileMenu()">
+        <i class="fas fa-users"></i> Users
+      </button>
+      <button class="nav-btn" onclick="showPage('cars'); closeMobileMenu()">
+        <i class="fas fa-car"></i> Cars
+      </button>
+      <button class="nav-btn" onclick="showAddCarModal(); closeMobileMenu()">
+        <i class="fas fa-plus-circle"></i> Add Car
+      </button>
+      <button class="nav-btn" onclick="showPage('requests'); closeMobileMenu()">
+        <i class="fas fa-envelope"></i> Requests
+      </button>
+      <button class="nav-btn" onclick="showPage('views'); closeMobileMenu()">
+        <i class="fas fa-eye"></i> Views
+      </button>
+      <button class="nav-btn" onclick="showPage('auctions'); closeMobileMenu()">
+        <i class="fas fa-gavel"></i> Auctions
+      </button>
+      <button class="nav-btn" onclick="showPage('reports'); closeMobileMenu()">
+        <i class="fas fa-chart-bar"></i> Reports
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -1121,11 +2100,66 @@ let allViews = [];
 let allAuctions = [];
 let allPayments = [];
 let currentCarTab = 'all';
+let mobileMenuOpen = false;
+let auctionRefreshInterval = null;
 
 /* ==================== INITIALIZATION ==================== */
 document.addEventListener('DOMContentLoaded', function() {
   checkAuthStatus();
+  checkMobileMenu();
+  
+  // Initialize auction auto-refresh system
+  startAuctionAutoRefresh();
 });
+
+/* ==================== MOBILE MENU FUNCTIONS ==================== */
+function toggleMobileMenu() {
+  const navButtons = document.getElementById('navButtons');
+  const menuToggle = document.querySelector('.menu-toggle');
+  
+  if (mobileMenuOpen) {
+    closeMobileMenu();
+  } else {
+    navButtons.classList.add('active');
+    menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+    mobileMenuOpen = true;
+    
+    // Close menu when clicking outside
+    setTimeout(() => {
+      document.addEventListener('click', closeMenuOnClickOutside);
+    }, 10);
+  }
+}
+
+function closeMobileMenu() {
+  const navButtons = document.getElementById('navButtons');
+  const menuToggle = document.querySelector('.menu-toggle');
+  
+  navButtons.classList.remove('active');
+  menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+  mobileMenuOpen = false;
+  
+  // Remove click listener
+  document.removeEventListener('click', closeMenuOnClickOutside);
+}
+
+function closeMenuOnClickOutside(event) {
+  const navButtons = document.getElementById('navButtons');
+  const menuToggle = document.querySelector('.menu-toggle');
+  
+  if (!navButtons.contains(event.target) && !menuToggle.contains(event.target)) {
+    closeMobileMenu();
+  }
+}
+
+function checkMobileMenu() {
+  // Close mobile menu when resizing to desktop
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 768 && mobileMenuOpen) {
+      closeMobileMenu();
+    }
+  });
+}
 
 /* ==================== AUTHENTICATION ==================== */
 function checkAuthStatus() {
@@ -1155,6 +2189,12 @@ function autoLogin() {
 }
 
 function logout() {
+  // Stop auction refresh interval
+  if (auctionRefreshInterval) {
+    clearInterval(auctionRefreshInterval);
+    auctionRefreshInterval = null;
+  }
+  
   localStorage.removeItem('carMarketUser');
   window.location.href = 'main.html';
 }
@@ -1167,16 +2207,28 @@ function updateUIForUser() {
 
 /* ==================== NAVIGATION ==================== */
 function showPage(pageId) {
+  // Close mobile menu if open
+  if (mobileMenuOpen) {
+    closeMobileMenu();
+  }
+  
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.classList.remove('active');
   });
-  document.querySelector(`.nav-btn[onclick*="${pageId}"]`)?.classList.add('active');
+  const navBtn = document.querySelector(`.nav-btn[onclick*="${pageId}"]`);
+  if (navBtn) navBtn.classList.add('active');
   
   document.querySelectorAll('.page').forEach(page => {
     page.classList.remove('active');
   });
   
   document.getElementById(pageId).classList.add('active');
+  
+  // Stop auto-refresh when leaving auctions page
+  if (pageId !== 'auctions' && auctionRefreshInterval) {
+    clearInterval(auctionRefreshInterval);
+    auctionRefreshInterval = null;
+  }
   
   switch(pageId) {
     case 'dashboard':
@@ -1203,9 +2255,196 @@ function showPage(pageId) {
   }
 }
 
+/* ==================== AUCTION AUTO-REFRESH ==================== */
+function startAuctionAutoRefresh() {
+  // Clear any existing interval
+  if (auctionRefreshInterval) {
+    clearInterval(auctionRefreshInterval);
+  }
+  
+  // Set interval to refresh every second
+  auctionRefreshInterval = setInterval(() => {
+    // Only refresh if auctions page is active
+    const auctionsPage = document.getElementById('auctions');
+    if (auctionsPage && auctionsPage.classList.contains('active')) {
+      refreshAuctionTimers();
+    }
+  }, 1000);
+}
+
+function refreshAuctionTimers() {
+  // Get all auction cards
+  const auctionCards = document.querySelectorAll('.auction-card');
+  
+  auctionCards.forEach(card => {
+    const timerElement = card.querySelector('.auction-timer span');
+    if (timerElement) {
+      const currentTime = timerElement.textContent;
+      const timeParts = currentTime.split(':').map(Number);
+      
+      if (timeParts.length === 3) {
+        let [hours, minutes, seconds] = timeParts;
+        
+        // Decrement seconds
+        seconds--;
+        
+        if (seconds < 0) {
+          seconds = 59;
+          minutes--;
+          
+          if (minutes < 0) {
+            minutes = 59;
+            hours--;
+            
+            if (hours < 0) {
+              // Auction has ended
+              hours = 0;
+              minutes = 0;
+              seconds = 0;
+              
+              // Add ended class
+              card.style.opacity = '0.7';
+              card.style.borderColor = '#94a3b8';
+              card.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
+              
+              // Update status
+              const timerContainer = card.querySelector('.auction-timer');
+              if (timerContainer) {
+                timerContainer.innerHTML = `
+                  <i class="fas fa-clock"></i>
+                  <span style="color:#ef4444;font-size:1.8rem;">00:00:00</span>
+                  <span style="color:#ef4444;font-weight:600;margin-left:10px;">ENDED</span>
+                `;
+              }
+              
+              // Disable bid button
+              const bidButton = card.querySelector('.btn-warning');
+              if (bidButton) {
+                bidButton.disabled = true;
+                bidButton.style.opacity = '0.5';
+                bidButton.style.cursor = 'not-allowed';
+                bidButton.innerHTML = '<i class="fas fa-ban"></i> Auction Ended';
+              }
+              
+              return;
+            }
+          }
+        }
+        
+        // Format time with leading zeros
+        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        timerElement.textContent = formattedTime;
+        
+        // Add visual feedback for low time
+        if (hours === 0 && minutes < 5) {
+          timerElement.style.color = '#ef4444';
+          timerElement.style.animation = 'pulse 1s infinite';
+          
+          if (!document.getElementById('pulse-animation')) {
+            const style = document.createElement('style');
+            style.id = 'pulse-animation';
+            style.textContent = `
+              @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.7; }
+                100% { opacity: 1; }
+              }
+            `;
+            document.head.appendChild(style);
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ==================== MOBILE MENU FUNCTIONS - UPDATED ==================== */
+function toggleMobileMenu() {
+  const navButtons = document.getElementById('navButtons');
+  const menuToggle = document.querySelector('.menu-toggle');
+  
+  if (mobileMenuOpen) {
+    closeMobileMenu();
+  } else {
+    navButtons.classList.add('active');
+    menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+    menuToggle.style.color = '#ef4444'; /* Change color when active */
+    mobileMenuOpen = true;
+    
+    // Add overlay to close menu when clicking outside
+    createMobileMenuOverlay();
+    
+    // Close menu when clicking outside
+    setTimeout(() => {
+      document.addEventListener('click', closeMenuOnClickOutside);
+    }, 10);
+  }
+}
+
+function closeMobileMenu() {
+  const navButtons = document.getElementById('navButtons');
+  const menuToggle = document.querySelector('.menu-toggle');
+  
+  navButtons.classList.remove('active');
+  menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+  menuToggle.style.color = 'red'; /* Reset color */
+  mobileMenuOpen = false;
+  
+  // Remove overlay if exists
+  removeMobileMenuOverlay();
+  
+  // Remove click listener
+  document.removeEventListener('click', closeMenuOnClickOutside);
+}
+
+function createMobileMenuOverlay() {
+  // Remove existing overlay if any
+  removeMobileMenuOverlay();
+  
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'mobileMenuOverlay';
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    z-index: 98;
+    display: block;
+  `;
+  
+  // Close menu when clicking overlay
+  overlay.addEventListener('click', closeMobileMenu);
+  
+  document.body.appendChild(overlay);
+}
+
+function removeMobileMenuOverlay() {
+  const overlay = document.getElementById('mobileMenuOverlay');
+  if (overlay) {
+    overlay.remove();
+  }
+}
+
+function closeMenuOnClickOutside(event) {
+  const navButtons = document.getElementById('navButtons');
+  const menuToggle = document.querySelector('.menu-toggle');
+  
+  if (!navButtons.contains(event.target) && !menuToggle.contains(event.target)) {
+    closeMobileMenu();
+  }
+}
+
 /* ==================== MODAL FUNCTIONS ==================== */
 function showModal(modalId) {
   document.getElementById(modalId).classList.remove('hidden');
+  
+  // Close mobile menu if open
+  if (mobileMenuOpen) {
+    closeMobileMenu();
+  }
 }
 
 function hideModal(modalId) {
@@ -2333,74 +3572,76 @@ function deleteCarAdmin(carId) {
 }
 
 function showAddCarModal() {
-  document.getElementById('addCarAdminContent').innerHTML = `
-    <h4 style="color: #1e293b; margin-bottom: 1.5rem;">
-      <i class="fas fa-plus-circle"></i> Add New Car
-    </h4>
-    
-    <div class="form-group">
-      <label><i class="fas fa-heading"></i> Car Title</label>
-      <input type="text" id="newCarTitle" class="form-control" placeholder="Car title">
-    </div>
-    
-    <div class="form-group">
-      <label><i class="fas fa-tag"></i> User Price (₹)</label>
-      <input type="number" id="newCarPrice" class="form-control" placeholder="Price shown to all users">
-    </div>
-    
-    <div class="form-group">
-      <label><i class="fas fa-user-tie"></i> Dealer Price (₹)</label>
-      <input type="number" id="newCarDealerPrice" class="form-control" placeholder="Price shown to active dealers only">
-      <small style="color: #64748b;">Only visible to active dealer accounts</small>
-    </div>
-    
-    <div class="form-group">
-      <label><i class="fas fa-align-left"></i> Description</label>
-      <textarea id="newCarDesc" class="form-control" rows="4" placeholder="Description"></textarea>
-    </div>
-    
-    <div class="form-group">
-      <label><i class="fas fa-image"></i> Image URLs (comma separated)</label>
-      <input type="text" id="newCarImages" class="form-control" placeholder="Image URLs">
-      <small style="color: #64748b;">Separate multiple URLs with commas</small>
-    </div>
-    
-    <div class="form-group">
-      <label><i class="fas fa-folder"></i> Category</label>
-      <select id="newCarCategory" class="form-control">
-        <option value="">Select Category</option>
-        <option value="SUV">🚙 SUV</option>
-        <option value="Sedan">🚗 Sedan</option>
-        <option value="Hatchback">🚘 Hatchback</option>
-        <option value="Luxury">🏎️ Luxury</option>
-        <option value="Sports">⚡ Sports</option>
-        <option value="Electric">🔋 Electric</option>
-      </select>
-    </div>
-    
-    <div class="form-group">
-      <label><i class="fas fa-user-tag"></i> Owner Role</label>
-      <select id="newCarOwnerRole" class="form-control">
-        <option value="user">👤 User</option>
-        <option value="dealer">🏢 Dealer</option>
-        <option value="admin">👑 Admin</option>
-      </select>
-    </div>
-    
-    <div class="form-group">
-      <label><i class="fas fa-envelope"></i> Owner Email</label>
-      <input type="email" id="newCarOwnerEmail" class="form-control" placeholder="owner@example.com">
-    </div>
-    
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button class="btn btn-primary" onclick="addNewCar()">
-        <i class="fas fa-plus"></i> Add Car
-      </button>
-      <button class="btn btn-secondary" onclick="hideModal('addCarAdminModal')">
-        <i class="fas fa-times"></i> Cancel
-      </button>
-    </div>
-  `;
+  if (document.getElementById('cars').classList.contains('active')) {
+    document.getElementById('addCarAdminContent').innerHTML = `
+      <h4 style="color: #1e293b; margin-bottom: 1.5rem;">
+        <i class="fas fa-plus-circle"></i> Add New Car
+      </h4>
+      
+      <div class="form-group">
+        <label><i class="fas fa-heading"></i> Car Title</label>
+        <input type="text" id="newCarTitle" class="form-control" placeholder="Car title">
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-tag"></i> User Price (₹)</label>
+        <input type="number" id="newCarPrice" class="form-control" placeholder="Price shown to all users">
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-user-tie"></i> Dealer Price (₹)</label>
+        <input type="number" id="newCarDealerPrice" class="form-control" placeholder="Price shown to active dealers only">
+        <small style="color: #64748b;">Only visible to active dealer accounts</small>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-align-left"></i> Description</label>
+        <textarea id="newCarDesc" class="form-control" rows="4" placeholder="Description"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-image"></i> Image URLs (comma separated)</label>
+        <input type="text" id="newCarImages" class="form-control" placeholder="Image URLs">
+        <small style="color: #64748b;">Separate multiple URLs with commas</small>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-folder"></i> Category</label>
+        <select id="newCarCategory" class="form-control">
+          <option value="">Select Category</option>
+          <option value="SUV">🚙 SUV</option>
+          <option value="Sedan">🚗 Sedan</option>
+          <option value="Hatchback">🚘 Hatchback</option>
+          <option value="Luxury">🏎️ Luxury</option>
+          <option value="Sports">⚡ Sports</option>
+          <option value="Electric">🔋 Electric</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-user-tag"></i> Owner Role</label>
+        <select id="newCarOwnerRole" class="form-control">
+          <option value="user">👤 User</option>
+          <option value="dealer">🏢 Dealer</option>
+          <option value="admin">👑 Admin</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-envelope"></i> Owner Email</label>
+        <input type="email" id="newCarOwnerEmail" class="form-control" placeholder="owner@example.com">
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn btn-primary" onclick="addNewCar()">
+          <i class="fas fa-plus"></i> Add Car
+        </button>
+        <button class="btn btn-secondary" onclick="hideModal('addCarAdminModal')">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
+    `;
+  }
   
   showModal('addCarAdminModal');
 }
@@ -2494,14 +3735,51 @@ function displayRequests(requests) {
     return;
   }
   
+  // Process requests to include car and user details
+  const processedRequests = requests.map(request => {
+    const [carId, requesterEmail, requesterRole, date] = request;
+    
+    // Find car details
+    const car = allCars.find(c => c[0] == carId);
+    const carTitle = car ? car[3] : 'Unknown Car';
+    const carOwnerEmail = car ? car[2] : 'Unknown Owner';
+    const carOwnerRole = car ? car[1] : 'Unknown';
+    const carPrice = car ? car[4] : 'N/A';
+    
+    // Find requester details
+    const requester = allUsers.find(u => u[0] === requesterEmail);
+    const requesterName = requester ? requester[3] : requesterEmail;
+    const requesterPhone = requester ? requester[4] : 'Not available';
+    
+    // Find owner details
+    const owner = allUsers.find(u => u[0] === carOwnerEmail);
+    const ownerName = owner ? owner[3] : carOwnerEmail;
+    const ownerPhone = owner ? owner[4] : 'Not available';
+    
+    return {
+      carId,
+      carTitle,
+      carPrice,
+      carOwnerEmail,
+      carOwnerName: ownerName,
+      carOwnerPhone: ownerPhone,
+      carOwnerRole,
+      requesterEmail,
+      requesterName,
+      requesterPhone,
+      requesterRole,
+      date
+    };
+  });
+  
   let html = `
     <div style="overflow-x: auto;">
       <table class="data-table">
         <thead>
           <tr>
-            <th>Car ID</th>
-            <th>Requester Email</th>
-            <th>Requester Role</th>
+            <th>Car Details</th>
+            <th>Owner Details</th>
+            <th>Requester Details</th>
             <th>Date</th>
             <th>Actions</th>
           </tr>
@@ -2509,16 +3787,35 @@ function displayRequests(requests) {
         <tbody>
   `;
   
-  requests.forEach(request => {
-    const [carId, requesterEmail, requesterRole, date] = request;
+  processedRequests.forEach(request => {
     html += `
       <tr>
-        <td>${carId}</td>
-        <td>${requesterEmail}</td>
-        <td><span class="user-badge ${requesterRole}" style="font-size: 0.8rem;">${requesterRole}</span></td>
-        <td>${new Date(date).toLocaleString()}</td>
         <td>
-          <button class="btn btn-primary btn-small" onclick="viewRequestDetails('${carId}', '${requesterEmail}')">
+          <div>
+            <strong>${request.carTitle}</strong><br>
+            <small style="color: #64748b;">ID: ${request.carId}</small><br>
+            <small style="color: #10b981; font-weight: 600;">₹${Number(request.carPrice).toLocaleString()}</small>
+          </div>
+        </td>
+        <td>
+          <div>
+            <strong>${request.carOwnerName}</strong><br>
+            <small style="color: #64748b;">${request.carOwnerEmail}</small><br>
+            <small>${request.carOwnerPhone}</small><br>
+            <small><span class="user-badge ${request.carOwnerRole}" style="font-size: 0.7rem;">${request.carOwnerRole}</span></small>
+          </div>
+        </td>
+        <td>
+          <div>
+            <strong>${request.requesterName}</strong><br>
+            <small style="color: #64748b;">${request.requesterEmail}</small><br>
+            <small>${request.requesterPhone}</small><br>
+            <small><span class="user-badge ${request.requesterRole}" style="font-size: 0.7rem;">${request.requesterRole}</span></small>
+          </div>
+        </td>
+        <td>${new Date(request.date).toLocaleString()}</td>
+        <td>
+          <button class="btn btn-primary btn-small" onclick="viewRequestDetails('${request.carId}', '${request.requesterEmail}')">
             <i class="fas fa-info-circle"></i> Details
           </button>
         </td>
@@ -2549,34 +3846,66 @@ function viewRequestDetails(carId, requesterEmail) {
   const requester = allUsers.find(u => u[0] === requesterEmail);
   
   document.getElementById('requestDetailsContent').innerHTML = `
-    <div class="details-grid">
-      <div class="detail-item">
-        <h4><i class="fas fa-car"></i> Car Information</h4>
-        <p><strong>Car ID:</strong> ${carId}</p>
-        <p><strong>Car Name:</strong> ${car[3] || 'Unknown'}</p>
-        <p><strong>Price:</strong> ₹${Number(car[4]).toLocaleString()}</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+      <div class="card" style="margin: 0;">
+        <h4 style="color: #1e293b; margin-bottom: 1rem;">
+          <i class="fas fa-car"></i> Car Information
+        </h4>
+        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+          <div style="flex: 1;">
+            <img src="${car[7] ? JSON.parse(car[7])[0] : 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341'}" 
+                 alt="${car[3]}" style="width: 100%; border-radius: 8px;">
+          </div>
+          <div style="flex: 2;">
+            <p><strong>Title:</strong> ${car[3]}</p>
+            <p><strong>ID:</strong> ${carId}</p>
+            <p><strong>Price:</strong> <span style="color: #10b981; font-weight: 600;">₹${Number(car[4]).toLocaleString()}</span></p>
+            <p><strong>Category:</strong> ${car[8] || 'N/A'}</p>
+            <p><strong>Status:</strong> ${car[9]}</p>
+          </div>
+        </div>
+        <p><strong>Description:</strong> ${car[6] || 'No description'}</p>
       </div>
       
-      <div class="detail-item">
-        <h4><i class="fas fa-user-tie"></i> Owner Information</h4>
-        <p><strong>Name:</strong> ${owner ? owner[3] : 'Unknown'}</p>
-        <p><strong>Email:</strong> ${car[2]}</p>
-        <p><strong>Phone:</strong> ${owner ? owner[4] : 'Not available'}</p>
-        <p><strong>Role:</strong> ${car[1]}</p>
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="card" style="margin: 0;">
+          <h4 style="color: #1e293b; margin-bottom: 1rem;">
+            <i class="fas fa-user-tie"></i> Owner Information
+          </h4>
+          <p><strong>Name:</strong> ${owner ? owner[3] : car[2]}</p>
+          <p><strong>Email:</strong> ${car[2]}</p>
+          <p><strong>Phone:</strong> ${owner ? owner[4] : 'Not available'}</p>
+          <p><strong>Address:</strong> ${owner ? owner[5] : 'Not available'}</p>
+          <p><strong>Role:</strong> <span class="user-badge ${car[1]}" style="font-size: 0.8rem;">${car[1]}</span></p>
+          <p><strong>Dealer Status:</strong> ${owner && owner[6] === 'YES' ? '✅ Active' : '❌ Inactive'}</p>
+        </div>
+        
+        <div class="card" style="margin: 0;">
+          <h4 style="color: #1e293b; margin-bottom: 1rem;">
+            <i class="fas fa-user"></i> Requester Information
+          </h4>
+          <p><strong>Name:</strong> ${requester ? requester[3] : requesterEmail}</p>
+          <p><strong>Email:</strong> ${requesterEmail}</p>
+          <p><strong>Phone:</strong> ${requester ? requester[4] : 'Not available'}</p>
+          <p><strong>Address:</strong> ${requester ? requester[5] : 'Not available'}</p>
+          <p><strong>Role:</strong> <span class="user-badge ${requester ? requester[2] : 'user'}" style="font-size: 0.8rem;">${requester ? requester[2] : 'user'}</span></p>
+        </div>
       </div>
-      
-      <div class="detail-item">
-        <h4><i class="fas fa-user"></i> Requester Information</h4>
-        <p><strong>Name:</strong> ${requester ? requester[3] : requesterEmail}</p>
-        <p><strong>Email:</strong> ${requesterEmail}</p>
-        <p><strong>Phone:</strong> ${requester ? requester[4] : 'Not available'}</p>
-        <p><strong>Role:</strong> ${requester ? requester[2] : 'user'}</p>
-      </div>
-      
-      <div class="detail-item">
-        <h4><i class="fas fa-clock"></i> Request Details</h4>
-        <p><strong>Status:</strong> <span style="color:#f59e0b;font-weight:600;">PENDING</span></p>
-        <p><strong>Note:</strong> User wants to contact owner for this car</p>
+    </div>
+    
+    <div class="card" style="margin-bottom: 2rem;">
+      <h4 style="color: #1e293b; margin-bottom: 1rem;">
+        <i class="fas fa-clock"></i> Request Details
+      </h4>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div>
+          <p><strong>Request Date:</strong> ${new Date().toLocaleString()}</p>
+          <p><strong>Status:</strong> <span style="color:#f59e0b;font-weight:600;">PENDING</span></p>
+        </div>
+        <div>
+          <p><strong>Type:</strong> Car Contact Request</p>
+          <p><strong>Purpose:</strong> ${requester ? requester[3] : requesterEmail} wants to contact owner about car purchase</p>
+        </div>
       </div>
     </div>
     
@@ -2588,8 +3917,11 @@ function viewRequestDetails(carId, requesterEmail) {
         <button class="btn btn-success" onclick="markRequestAsCompleted('${carId}', '${requesterEmail}')">
           <i class="fas fa-check"></i> Mark as Completed
         </button>
-        <button class="btn btn-primary" onclick="sendOwnerDetails('${car[2]}', '${requesterEmail}', '${carId}')">
-          <i class="fas fa-paper-plane"></i> Send Owner Details
+        <button class="btn btn-primary" onclick="sendOwnerDetails('${car[2]}', '${requesterEmail}', '${carId}', '${car[3]}')">
+          <i class="fas fa-paper-plane"></i> Send Owner Details to Requester
+        </button>
+        <button class="btn btn-info" onclick="openEmailComposer('${requesterEmail}', '${car[2]}', '${carId}', '${car[3]}')">
+          <i class="fas fa-envelope"></i> Send Email to Both Parties
         </button>
         <button class="btn btn-secondary" onclick="hideModal('requestDetailsModal')">
           <i class="fas fa-times"></i> Close
@@ -2725,6 +4057,13 @@ function loadAllAuctions() {
     if (auctions && !auctions.status) {
       allAuctions = auctions;
       displayAuctions(auctions);
+      
+      // Start auto-refresh timer for auctions page
+      if (document.getElementById('auctions').classList.contains('active')) {
+        setTimeout(() => {
+          startAuctionAutoRefresh();
+        }, 100);
+      }
     } else if (auctions && auctions.status === 'error') {
       console.error('Error loading auctions:', auctions.message);
       displayAuctions([]);
@@ -2758,16 +4097,42 @@ function displayAuctions(auctions) {
   
   container.innerHTML = '';
   
+  // Show live auction counter
+  const activeAuctions = auctions.filter(auction => auction[2] === 'ACTIVE');
+  container.innerHTML = `
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div style="display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 8px 24px; border-radius: 20px; font-weight: 700;">
+        <i class="fas fa-bolt"></i>
+        <span id="liveAuctionCount">${activeAuctions.length} LIVE AUCTIONS</span>
+        <div id="refreshIndicator" style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 1s infinite;"></div>
+      </div>
+      <p style="color: #64748b; margin-top: 10px; font-size: 0.9rem;">
+        <i class="fas fa-sync-alt"></i> Auto-refreshing every second
+      </p>
+    </div>
+  `;
+  
   auctions.forEach(auction => {
     const [auctionId, carId, status, startPrice, startTime, endTime] = auction;
     const car = allCars.find(c => c[0] == carId);
     
     if (!car) return;
     
+    const endDate = new Date(endTime);
+    const now = new Date();
+    const timeRemaining = endDate - now;
+    
+    // Calculate time remaining
+    const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+    
+    const timeRemainingStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
     const auctionCard = document.createElement('div');
-    auctionCard.className = 'car-card';
+    auctionCard.className = 'auction-card';
     auctionCard.innerHTML = `
-      <span class="car-status ${status === 'ACTIVE' ? 'status-active' : 'status-sold'}">
+      <span class="car-status ${status === 'ACTIVE' ? 'status-auction' : 'status-sold'}">
         ${status === 'ACTIVE' ? 'AUCTION LIVE' : 'AUCTION ENDED'}
       </span>
       <div class="car-image-container">
@@ -2777,6 +4142,15 @@ function displayAuctions(auctions) {
       <div class="car-content">
         <h3 class="car-title">${car[3]}</h3>
         <p class="car-price"><i class="fas fa-gavel"></i> Starting Price: ₹${Number(startPrice).toLocaleString()}</p>
+        
+        ${status === 'ACTIVE' ? `
+          <div class="auction-timer">
+            <i class="fas fa-clock"></i>
+            <span>${timeRemainingStr}</span>
+            <span class="timer-label">TIME REMAINING</span>
+          </div>
+        ` : ''}
+        
         <div class="car-meta">
           <span><i class="fas fa-calendar"></i> Started: ${new Date(startTime).toLocaleDateString()}</span>
           ${endTime ? `<span><i class="fas fa-clock"></i> Ends: ${new Date(endTime).toLocaleDateString()}</span>` : ''}
@@ -3414,6 +4788,84 @@ function displayRevenueReport() {
     `;
   });
 }
+
+function sendOwnerDetails(ownerEmail, requesterEmail, carId, carTitle) {
+  const owner = allUsers.find(u => u[0] === ownerEmail);
+  if (!owner) {
+    alert('Owner details not found');
+    return;
+  }
+  
+  const ownerDetails = `
+    OWNER DETAILS FOR CAR: ${carTitle}
+    =================================
+    Owner Name: ${owner[3]}
+    Email: ${owner[0]}
+    Phone: ${owner[4]}
+    Address: ${owner[5]}
+    
+    CAR DETAILS:
+    =================================
+    Car Title: ${carTitle}
+    Car ID: ${carId}
+    
+    REQUESTER DETAILS:
+    =================================
+    Email: ${requesterEmail}
+    Request Date: ${new Date().toLocaleDateString()}
+  `;
+  
+  alert(`📧 Owner details for "${carTitle}" have been copied to clipboard. You can now share these with the requester.\n\nYou can also use the "Send Email to Both Parties" button for direct communication.`);
+  
+  // Copy to clipboard
+  copyToClipboard(ownerDetails);
+}
+
+function openEmailComposer(requesterEmail, ownerEmail, carId, carTitle) {
+  const owner = allUsers.find(u => u[0] === ownerEmail);
+  const requester = allUsers.find(u => u[0] === requesterEmail);
+  
+  const subject = encodeURIComponent(`Contact Request for Car: ${carTitle}`);
+  const body = encodeURIComponent(`
+Dear ${requester ? requester[3] : requesterEmail},
+
+This email is regarding your interest in the car "${carTitle}" (ID: ${carId}).
+
+OWNER CONTACT DETAILS:
+Name: ${owner ? owner[3] : ownerEmail}
+Email: ${ownerEmail}
+Phone: ${owner ? owner[4] : 'Contact via email'}
+
+Please contact the owner directly for further discussions about the car.
+
+Best regards,
+Car Marketplace Admin
+  `);
+  
+  window.open(`mailto:${requesterEmail}?cc=${ownerEmail}&subject=${subject}&body=${body}`);
+}
+
+function markRequestAsCompleted(carId, requesterEmail) {
+  if (confirm('Mark this request as completed?')) {
+    // Here you would typically update the request status in your backend
+    // For now, we'll just show an alert and refresh
+    alert('✅ Request marked as completed');
+    hideModal('requestDetailsModal');
+    loadAllRequests();
+    loadAdminDashboard();
+  }
+}
+
+// Helper function to copy text to clipboard
+function copyToClipboard(text) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textarea);
+}
 </script>
 </body>
 </html>
+
